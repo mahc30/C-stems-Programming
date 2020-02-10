@@ -50,12 +50,14 @@ typedef struct Estudiante{
 void mkdb(char n_base[30], int c_reg);
 estudiante *loaddb(char FILE_NAME[30]);
 void savedb(char ruta[31]);
-void readall(FILE db);
-int readsize(FILE db);
+void readall();
+void readsize();
 void mkreg(int cedula, char nombre[], int semestre);
-struct estudiante readreg(int cedula);
+estudiante *readreg(int cedula);
+
 void salir(bool *exit);
 
+//Función auxiliar para castear strings a enteros
 char *itoa(int num, char *str)
 {
         if(str == NULL)
@@ -65,10 +67,12 @@ char *itoa(int num, char *str)
         sprintf(str, "%d", num);
         return str;
 }
+
 //Global Variables for easier code purposes
+
 int db_size;
 bool db_loaded = false;
-estudiante *db;
+estudiante *db; //Acá se almacena la base de datos
 
 int main(void) {
 
@@ -111,11 +115,27 @@ int main(void) {
 
 			savedb(arg1);
 		}else if(strcmp(comando, "readall") == 0 && db_loaded){
-			puts("running readall");
+			puts("\nrunning readall");
+			readall();
 		}else if(strcmp(comando, "readsize") == 0 && db_loaded){
-			puts("running readsize");
+			puts("\nrunning readsize");
+			readsize();
 		}else if(strcmp(comando, "mkreg") == 0 && db_loaded){
-			puts("running mkreg");
+			printf("\nrunning %s %s %s %s",comando, arg1, arg2, arg3);
+			int c_reg;
+			int s_reg;
+			c_reg = atoi(arg1);
+			s_reg = atoi(arg3);
+
+			mkreg(c_reg, arg2, s_reg);
+		}
+		else if(strcmp(comando, "readreg") == 0 && db_loaded){
+			printf("\nrunning %s %s", comando, arg1);
+			estudiante *current_reg;
+			int c_num = atoi(arg1);
+			current_reg = readreg(c_num);
+
+			printf("\nCedula %d Nombre %s Semestre %d", current_reg ->cedula, current_reg -> nombre, current_reg ->semestre);
 		}
 		else if(strcmp(comando, "exit") == 0){
 			strcpy(comando, "");
@@ -190,8 +210,6 @@ estudiante *loaddb(char FILE_NAME[30]){
 		fscanf(db, "%s %s", buffer, nombre);
 		fscanf(db, "%s %d", buffer, &semestre);
 
-
-		//printf("\nCedula: %d Nombre:%s Semestre:%d",cedula, nombre, semestre);
 		newEst.cedula = cedula;
 		strcpy(newEst.nombre, nombre);
 		newEst.semestre = semestre;
@@ -243,6 +261,48 @@ void savedb(char ruta[30]){
 
 	printf("\n%s", "Db Saved :D");
 	fclose(newDb);
+}
+
+void readall(){
+	printf("\n%20s %20s %20s", "Cedula","Nombre","Semestre");
+	char cedula[11];
+	char semestre[3];
+
+	for(int i = 0; i < db_size; i++){
+
+		itoa((db + i) -> cedula, cedula);
+		itoa((db + i) -> semestre, semestre);
+		printf("\n%20s %20s %20s",cedula, (db + i) ->nombre, semestre);
+	}
+}
+
+void readsize(){
+	printf("\nLa base de datos tiene %d registros", db_size);
+}
+
+void mkreg(int cedula, char nombre[], int semestre){
+
+	//Inicialización de la estructura
+	estudiante newEst;
+	estudiante *ptr = &newEst;
+
+	ptr -> cedula = cedula;
+	strcpy(ptr ->nombre, nombre);
+	ptr -> semestre = semestre;
+
+	//printf("\n %d %s %d", newEst.cedula, newEst.nombre, newEst.semestre);
+	*(db + db_size) = *ptr;
+	db_size ++;
+}
+
+estudiante *readreg(int cedula){
+	for(int i = 0; i < db_size; i++){
+		if((db + i) -> cedula == cedula){
+			return db +i;
+		}
+	}
+
+	return NULL;
 }
 
 void salir(bool *exit){
