@@ -49,33 +49,43 @@ typedef struct Estudiante{
 
 void mkdb(char n_base[30], int c_reg);
 estudiante *loaddb(char FILE_NAME[30]);
-void savedb(FILE db, char path[]);
+void savedb(char ruta[31]);
 void readall(FILE db);
 int readsize(FILE db);
 void mkreg(int cedula, char nombre[], int semestre);
 struct estudiante readreg(int cedula);
 void salir(bool *exit);
 
+char *itoa(int num, char *str)
+{
+        if(str == NULL)
+        {
+                return NULL;
+        }
+        sprintf(str, "%d", num);
+        return str;
+}
+//Global Variables for easier code purposes
+int db_size;
+bool db_loaded = false;
+estudiante *db;
 
 int main(void) {
 
-
 	bool exit = false;
-	bool db_loaded = false;
 	char instruccion[33];
 	char comando[10];
 	char arg1[31];
 	char arg2[31];
 	char arg3[3];
 
-	struct estudiante * db;
 	//Scan for Instructions
 	while(!exit){
 		strcpy(comando, "");
 		printf("\n%c",'>');
 		//mkdb
 		fgets(instruccion, 32, stdin);
-		sscanf(instruccion, "%32s %30s %30s %2s", comando, arg1, arg2, arg3);
+		sscanf(instruccion, "%9s %30s %30s %2s", comando, arg1, arg2, arg3);
 
 		if(strcmp(comando, "mkdb") == 0){
 			int c_reg;
@@ -86,9 +96,20 @@ int main(void) {
 		else if(strcmp(comando, "loaddb") == 0){
 			printf("running %s %s", comando, arg1);
 			db = loaddb(arg1);
+
+			printf("\nDatabase loaded in: %p",db);
+			// Para verificar que el puntero está bien o los datos whatever u want
+			/*
+			  for(int i = 0; i < 2; i++){
+				printf("\nCedula: %dNombre: %sSemestre: %d", (db+i)->cedula,(db+i)->nombre,(db+i)->semestre);
+				}
+			 */
+
 		}
 		else if(strcmp(comando, "savedb") == 0 && db_loaded){
-			puts("running savedb");
+			printf("\nrunning %s %s", comando, arg1);
+
+			savedb(arg1);
 		}else if(strcmp(comando, "readall") == 0 && db_loaded){
 			puts("running readall");
 		}else if(strcmp(comando, "readsize") == 0 && db_loaded){
@@ -116,7 +137,7 @@ void mkdb(char n_base[30],int c_reg){
 
 	strcat(PATH,dir);
 	strcat(PATH,n_base);
-	char reg[] = "\nCedula:xxxxxxxxxx\nNombre:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nSemestre:xx";
+	char reg[] = "\nCedula: xxxxxxxxxx\nNombre: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nSemestre: xx";
 
 	FILE *db = fopen(PATH,"w");
 	fprintf(db, "Número_de_Registros: %d", c_reg);
@@ -132,7 +153,7 @@ estudiante *loaddb(char FILE_NAME[30]){
 	char path[] = "./files/";
 	char buffer[30];
 	int size;
-	estudiante *dynPtr;
+	estudiante *strPointer;
 	estudiante newEst;
 	int cedula;
 	char nombre[30];
@@ -149,12 +170,13 @@ estudiante *loaddb(char FILE_NAME[30]){
 	}
 	//Leo la primera linea para saber la cantidad de registros
 	*buffer = fscanf(db, "%s %d", buffer, &size);
-	printf("Se cargarán %d Registros", size);
+	printf("\nSe cargarán %d Registros", size);
+	db_size = size;
 	//Asigno un puntero a donde se crea el espacio para la base de datos
-	dynPtr = (estudiante *)malloc(sizeof(struct Estudiante) * size);
+	strPointer = (estudiante *)malloc(sizeof(struct Estudiante) * size);
 
 	//Comprobar que si se haya creado la memoria;
-	if(dynPtr == 0){
+	if(strPointer == 0){
 		puts("\nError cargando base de datos");
 		return NULL;
 	}else{
@@ -163,19 +185,64 @@ estudiante *loaddb(char FILE_NAME[30]){
 
 
 	//Cargo cada registro
-	for(int i = 0; fscanf(db, "%s %d", buffer, cedula) == 2; i++){
+	for(int i = 0; i < size; i++){
+		fscanf(db, "%s %d", buffer, &cedula);
 		fscanf(db, "%s %s", buffer, nombre);
-		fscanf(db, "%s %d", buffer, semestre);
+		fscanf(db, "%s %d", buffer, &semestre);
 
+
+		//printf("\nCedula: %d Nombre:%s Semestre:%d",cedula, nombre, semestre);
 		newEst.cedula = cedula;
 		strcpy(newEst.nombre, nombre);
 		newEst.semestre = semestre;
 
-		*(dynPtr + i) = newEst;
+		*(strPointer + i) = newEst;
 	}
-	//TODO Comprobar que si se guarden los datos en memoria
+
+	fclose(db);
 	puts("\nBase de datos Cargada");
-	return dynPtr;
+	db_loaded = !db_loaded;
+
+	return strPointer;
+}
+
+void savedb(char ruta[30]){
+	char PATH[64];
+	char *dir = "./files/";
+	char snum[32];
+
+	strcpy(PATH, dir);
+	strcat(PATH, ruta);
+	printf("\nSaving DB in: %s", PATH);
+
+	estudiante *ldb = db;
+	FILE *newDb;
+	char regs[2048];
+
+	newDb = fopen(PATH, "w");
+
+	strcpy(regs, "Numero_de_Registros: ");
+	itoa(db_size, snum);
+	strcat(regs, snum);
+
+	for(int i = 0; i < db_size; i++){
+		strcat(regs, "\nCedula: ");
+
+		itoa((db + i) -> cedula, snum);
+		strcat(regs, snum);
+
+		strcat(regs, "\nNombre: ");
+		strcat(regs, (db + i) -> nombre);
+
+		strcat(regs, "\nSemestre: ");
+		itoa((db + i) -> semestre, snum);
+		strcat(regs, snum);
+	}
+
+	fprintf(newDb, regs);
+
+	printf("\n%s", "Db Saved :D");
+	fclose(newDb);
 }
 
 void salir(bool *exit){
@@ -186,13 +253,17 @@ void salir(bool *exit){
 
 	if(confirmation){
 		puts("?Desea guardar la Base de Datos¿ SI: 1 NO: 0");
-		//TODO Guardar base de datos
+
 		scanf("%d", &confirmation);
-		if(confirmation){
-			puts("Base de datos guardada, bye :)");
+		if(confirmation && db_loaded){
+			char ruta[30];
+			puts("\nIngrese el nombre del nuevo archivo: ");
+			scanf("%s", ruta);
+			savedb(ruta);
+			puts("\nBase de datos guardada, bye :)");
 			*exit = !(*exit);
 		}else{
-			puts("bye :)");
+			puts("\nbye :)");
 			*exit = !(*exit);
 		}
 	}else{
