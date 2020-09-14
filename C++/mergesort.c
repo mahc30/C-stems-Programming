@@ -9,7 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define NELEMS(x)  (sizeof(x) / sizeof((x)[0])) //Macro to determine size of array
-
+#include <stdbool.h>
+#include <time.h>
 
 //Testing function
 void printArray(char tag, int array[],int n){
@@ -78,13 +79,38 @@ void mergeSort(int A[], int n){
 	merge(left, right, A, ls, rs);
 }
 
+bool isSorted(int array[],int size){
+	for(int i = 1; i < size; i++){
+		if(array[i] < array[i-1]) return false;
+	}
+	return true;
+}
+
 int main(void) {
 	int array[] = {8,2,4,6,7,5,1,9,0,3};
 	int n = NELEMS(array);
 	printArray('U', array, n);
 
+	// Calculate the time taken by mergeSort()
+	clock_t t;
+	t = clock();
 	mergeSort(array, n);
+	t = clock() - t;
+
+	double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+   printf("mergeSort() took %f seconds to execute \n", time_taken);
+
 	printArray('S', array, n);
+
+	// Calculate the time taken by isSorted()
+		t = clock();
+	int isSort = isSorted(array, n);
+	t = clock() - t;
+	time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+	printf("mergeSort() took %f seconds to execute \n", time_taken);
+
+
+	fputs(isSort ? "true" : "false", stdout);
 
 	return EXIT_SUCCESS;
 }

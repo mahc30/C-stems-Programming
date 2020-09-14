@@ -5,13 +5,15 @@
 //============================================================================
 
 #include <iostream>
+#include <stdbool.h>
+#include <chrono>
 
 using namespace std;
 
 void printArray(int array[], int size){
 	cout << "[";
 	for(int i = 0; i < size; i++){
-		cout << array[i];
+		cout << array[i] << ", ";
 	}
 	cout << "]" << std::endl;
 }
@@ -80,13 +82,32 @@ void mergeSort(int A[], int n){
 	merge(left, right, A, ls, rs);
 }
 
+inline bool isSorted(int array[],int size){
+	for(int i = 1; i < size; i++){
+		if(array[i] < array[i-1]) return false;
+	}
+	return true;
+}
+
 int main() {
-	int array[] = {0,5,1,9,6,2,8,3,7,4};
+	int array[] = {0,5,1,9,6,2,8,3,7,4,-213,235,23,23,5,235,23,52,36,25,12,21,5,5,8,141,75,45,867,3,47,45742,412,412553,513,51,51,343};
 	int n = sizeof(array)/sizeof(array[0]);
 
 	printArray(array, n);
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	mergeSort(array, n);
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	printArray(array, n);
+
+	std::cout << "Time taken by mergeSort = " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() << "[nanoseconds]" << std::endl;
+
+	begin = std::chrono::steady_clock::now();
+	int isSort = isSorted(array, n);
+	end = std::chrono::steady_clock::now();
+
+	if (isSort)
+		std::cout << "Is Sorted and took = " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() << "[nanoseconds] to test" << std::endl;
+
 	return 0;
 }
 
