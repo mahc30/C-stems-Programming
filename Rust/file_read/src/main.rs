@@ -11,8 +11,9 @@ El programa deberá leer el archivo y generar uno nuevo. El archivo nuevo tendr�
     Tendrá una quinta línea pero estará vacía.
 */
 
-use std::io::{stdin, stdout, Write};
+use std::env;
 use std::fs;
+use std::io::{stdin, stdout, Write};
 
 fn read(input: &mut String) {
     stdout().flush().expect("Couldn't flush buffer");
@@ -37,15 +38,21 @@ fn sort(arr: &mut Vec<i32>, len: usize) {
 
 fn main() {
 
-    println!("Escriba el nombre del archivo a buscar: ");
+    let args: Vec<String> = env::args().collect();
     let mut name : String = String::new();
-    read(&mut name);
+
+    // Diferente comportamiento dependiendo de la cantidad de argumentos
+    if args.capacity() > 1 { //Si hay argumentos...
+        name = args[1].clone();
+    } else {
+        println!("Escriba el nombre del archivo a buscar: ");
+        read(&mut name);
+    }
 
     // Formatear ruta del archivo
-    let path : String = format!("./{}.txt", name.trim());
-    
+    let path: String = format!("./{}.txt", name.trim());
     // Leer archivo
-    let buffer : String = match fs::read_to_string(path.trim()){
+    let buffer: String = match fs::read_to_string(path.trim()) {
         Ok(buffer) => buffer,
         _ => {
             println!("Error leyendo el archivo");
