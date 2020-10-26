@@ -11,14 +11,22 @@ El programa deberá leer el archivo y generar uno nuevo. El archivo nuevo tendr�
     Tendrá una quinta línea pero estará vacía.
 */
 
+use std::io::{stdin, stdout, Write};
+use std::fs;
+
+fn read(input: &mut String) {
+    stdout().flush().expect("Couldn't flush buffer");
+    stdin().read_line(input).expect("Failed to read");
+}
+
 fn es_mayor(a: i32, b: i32) -> bool {
     a > b
 }
 
-fn sort(arr: &mut Vec<i32>, len: usize){ 
+fn sort(arr: &mut Vec<i32>, len: usize) {
     for i in 0..len {
-        for j in 0..len{
-            if es_mayor(arr[j] , arr[i]){
+        for j in 0..len {
+            if es_mayor(arr[j], arr[i]) {
                 let temp: i32 = arr[i];
                 arr[i] = arr[j];
                 arr[j] = temp;
@@ -28,32 +36,48 @@ fn sort(arr: &mut Vec<i32>, len: usize){
 }
 
 fn main() {
-    let buffer: String = String::from("1 9 3 4 8 5 7 40 3 2");
 
+    println!("Escriba el nombre del archivo a buscar: ");
+    let mut name : String = String::new();
+    read(&mut name);
+
+    // Formatear ruta del archivo
+    let path : String = format!("./{}.txt", name.trim());
+    
+    // Leer archivo
+    let buffer : String = match fs::read_to_string(path.trim()){
+        Ok(buffer) => buffer,
+        _ => {
+            println!("Error leyendo el archivo");
+            return;
+        }
+    };
+
+    //Convertir String en un arreglo de enteros
     let mut numbers: Vec<i32> = buffer
         .split_whitespace()
         .map(|s| s.parse().unwrap())
         .collect();
 
-    let numbers_size : usize = numbers.len();
-    let mut max: i32 = numbers[0];
-    let mut min: i32 = numbers[0];
-    let mut avg: f32 = 0.0;
-    
+    let numbers_size: usize = numbers.len();
     sort(&mut numbers, numbers_size);
 
+    //Arreglo ordenado de menor a mayor
+    let min: i32 = numbers[0];
+    let max: i32 = numbers[numbers_size - 1];
+
+    let mut avg: f32 = 0.0;
+
+    //Sumar posiciones del arreglo
     for i in numbers {
-        if es_mayor(i, max) {
-            max = i;
-        }
-
-        if es_mayor(min, i){
-            min = i;
-        }
-
         avg += i as f32;
         print!("{} ", i);
     }
 
-    println!("\nNúmero Mayor: {}\nNúmero Menor: {}\nPromedio: {}\n", max, min, avg / numbers_size as f32);
+    println!(
+        "\nNúmero Mayor: {}\nNúmero Menor: {}\nPromedio: {}\n",
+        max,
+        min,
+        avg / numbers_size as f32
+    ); //Podemos poner operaciones dentro de los argumentos de print
 }
