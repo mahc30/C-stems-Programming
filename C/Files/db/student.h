@@ -14,17 +14,14 @@ void student_ctor(struct student_t*,
                             const int /*semester*/);
 
 //Destructor
-void sutdent_dtor(struct student_t*);
+void student_dtor(struct student_t*);
 
 //Behaviour functions
 int student_get_id(struct student_t*);
 char* student_get_name(struct student_t*);
 int student_get_semester(struct student_t*);
-
-student_t *loaddb(char FILE_NAME[30]);
-student_t *readreg(int id);
-
-int db_size;
-bool db_loaded;
+void student_parse_reg(struct student_t*, char *);
+char *student_create_register(struct student_t*);
+void student_calloc_n(struct student_t *, int n);
 
 #endif

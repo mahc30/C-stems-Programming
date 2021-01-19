@@ -37,8 +37,8 @@ Cada comando deberá implementarse como una función.
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <constants.h>
-#include <student.h>
+#include "constants.h"
+#include "student.h"
 
 //private definition
 typedef struct
@@ -53,108 +53,133 @@ file_db_t *file_db_new()
 	return (file_db_t *)malloc(sizeof(file_db_t));
 }
 
-void file_db_ctor(file_db_t *db,
-				  int _db_size,
-				  char *_filename)
+void file_db_ctor(file_db_t *_db,
+				  char *_filename,
+				  int _db_size)
 {
-	db->db_size = db_size;
-	strcpy(db->filename, _filename);
+	_db->filename = (char *)malloc(strlen((_filename) + 1) * sizeof(char));
+	strcpy(_db->filename, _filename);
+	_db->db_size = _db_size;
 }
 
-void file_db_dtor(file_db_t *db)
+void file_db_dtor(file_db_t *_db)
 {
-	for (int i = 0; i < db->db_size; i++)
+	for (int i = 0; i < _db->db_size; i++)
 	{
-		free(db->students[i]);
+		free(_db->students[i]);
 	}
-	free(db);
+	free(_db);
 }
 
-void *file_db_get_registers(file_db_t *db)
+void *file_db_get_registers(file_db_t *_db)
 {
-	return db->students;
+	return _db->students;
 }
 
-void file_db_mkdb(file_db_t *db, int db_file_size)
+void file_db_mkdb(file_db_t *_db)
 {
-	char db_file_path[100] = FILE_SERVICE_PATH;
-	strcat(db_file_path, db->filename);
+	char db_file_path[100];
+	strcpy(db_file_path, FILE_SERVICE_PATH);
+	strcat(db_file_path, _db->filename);
 
 	FILE *file = fopen(db_file_path, "w");
+	if (file == NULL)
+	{
+		perror("MKDB, ERROR CREATING FILE");
+	}
 
-	file_db_ctor(db, db->db_size, db_file_path);
-	fprintf(file, "%d", db_file_size);
+	file_db_ctor(_db, db_file_path, _db->db_size);
+	fprintf(file, "%d", _db->db_size);
 	fclose(file);
 
 	puts("\nDb Created");
 }
 
-void file_loaddb(file_db_t *db, char *_db_name)
+void file_db_loaddb(file_db_t *_db)
 {
-	db = fopen(_db_name, "r");
+	char path[MAX_FILENAME_SIZE + 16];
+	strcmp(path, FILE_SERVICE_PATH);
+	strcat(path, _db -> filename);
+
+printf("%s", path);
+	FILE *file = fopen(path, "r");
+	if (file == NULL)
+	{
+		perror("LOADDB, ERROR CREATING FILE");
+	}
+
+
+	//Read File db_size, Because of format is always the first line
+	fscanf(file, "%d", &(_db -> db_size));
+	printf("DB size: %d", _db -> db_size);
+
+	//Allocate memory for students
+	student_calloc_n( *(_db -> students) ,_db -> db_size);
+
+	char reg[1024];
+	//Scan all registers
+	for(int i = 0; i < _db -> db_size; i++){
+		fscanf(file, "%s", reg);
+		student_parse_reg(_db -> students[i], reg);
+	}
+
+	//TOdo _db ctor
 }
 
-void file_db_savedb(file_db_t *db, char *regs)
+void file_db_savedb(file_db_t *_db, char *regs)
 {
-	FILE *save_file = fopen(db->filename, "w");
-	printf("\nSaving DB in: %s", db->filename);
-	fprintf(save_file, db->db_size);
-	fprintf(save_file, regs);
+	FILE *save_file = fopen(_db->filename, "w");
+	printf("\nSaving DB in: %s", _db->filename);
+	fprintf(save_file, "%d", _db->db_size);
+	fprintf(save_file, "%s", regs);
 
 	fclose(save_file);
 	puts("Db Saved :D");
 }
 
-void file_db_readall(file_db_t *db)
+void file_db_readall(file_db_t *_db)
 {
 	printf("\n%20s %20s %20s", "Cedula", "Nombre", "Semestre");
 
-	for (int i = 0; i < db->db_size; i++)
+	for (int i = 0; i < _db->db_size; i++)
 	{
 		printf("\n%20d %20s %20d",
-			   db->students[i]->id,
-			   db->students[i]->name,
-			   db->students[i]->semester);
+			   student_get_id(_db->students[i]),
+			   student_get_name(_db->students[i]),
+			   student_get_semester(_db->students[i]));
 	}
 }
 
-void file_db_readsize(file_db_t *db)
+void file_db_readsize(file_db_t *_db)
 {
-	printf("\nLa base de datos tiene %d registros", db->db_size);
+	printf("\nLa base de datos tiene %d registros", _db->db_size);
 }
 
-void file_db_mkreg(file_db_t *db, int id, char name[], int semester)
+void file_db_mkreg(file_db_t *_db, int id, char name[], int semester)
 {
-
-	//Inicialización de la estructura
 	struct student_t *student = student_new();
 	student_ctor(student, id, name, semester);
 
-	void *realloc_buffer = realloc(db->students, sizeof(student_t) * db_size);
-	if (realloc_buffer == NULL)
-	{
-		perror("Error Reallocating Memory. MKREG");
-	}
-	else
-	{
-		db->db_size += 1;
-		db->students = realloc_buffer;
-		db->students[db_size] = student; //Push to end
-										 //TODO make it a stack lol
-	}
+	printf("\nTODO STACK FOR MKREG\n Tried Adding new student:\n %20d %20s %20d",
+		   student_get_id(student),
+		   student_get_name(student),
+		   student_get_semester(student));
+
+	_db->db_size += 1;
+	//TODO stack for students in file_db
 }
 
-void file_db_readreg(file_db_t *db, int _id)
+void file_db_readreg(file_db_t *_db, int _id)
 {
 	//Search for id
-	for (int i = 0; i < db->db_size; i++)
+	for (int i = 0; i < _db->db_size; i++)
 	{
-		if (db->students[i]->id == _id)
+		if (student_get_id(_db->students[i]) == _id)
 		{
 			printf("\n%20d %20s %20d",
-				   db->students[i]->id,
-				   db->students[i]->name,
-				   db->students[i]->semester);
+				   student_get_id(_db->students[i]),
+				   student_get_name(_db->students[i]),
+				   student_get_semester(_db->students[i]));
 		}
 	}
 }
