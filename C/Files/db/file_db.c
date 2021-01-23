@@ -38,14 +38,14 @@ Cada comando deberá implementarse como una función.
 #include <stdbool.h>
 #include <string.h>
 #include "constants.h"
-#include "student.h"
+#include "stack.h"
 
 //private definition
 typedef struct
 {
-	int db_size;
+	unsigned int db_size;
 	char *filename;
-	struct student_t *students[];
+	struct stack_t *students;
 } file_db_t;
 
 file_db_t *file_db_new()
@@ -66,7 +66,7 @@ void file_db_dtor(file_db_t *_db)
 {
 	for (int i = 0; i < _db->db_size; i++)
 	{
-		free(_db->students[i]);
+		free(_db->students);
 	}
 	free(_db);
 }
@@ -98,32 +98,36 @@ void file_db_mkdb(file_db_t *_db)
 void file_db_loaddb(file_db_t *_db)
 {
 	char path[MAX_FILENAME_SIZE + 16];
-	strcmp(path, FILE_SERVICE_PATH);
-	strcat(path, _db -> filename);
+	strcpy(path, FILE_SERVICE_PATH);
+	strcat(path, _db->filename);
 
-printf("%s", path);
 	FILE *file = fopen(path, "r");
 	if (file == NULL)
 	{
-		perror("LOADDB, ERROR CREATING FILE");
+		perror("LOADDB, ERROR READING FILE");
+		return;
 	}
-
 
 	//Read File db_size, Because of format is always the first line
-	fscanf(file, "%d", &(_db -> db_size));
-	printf("DB size: %d", _db -> db_size);
-
-	//Allocate memory for students
-	student_calloc_n( *(_db -> students) ,_db -> db_size);
-
-	char reg[1024];
-	//Scan all registers
-	for(int i = 0; i < _db -> db_size; i++){
-		fscanf(file, "%s", reg);
-		student_parse_reg(_db -> students[i], reg);
+	if (fscanf(file, "%u", &(_db->db_size)) != 1)
+	{
+		perror("LOADDB, ERROR READING FILE");
 	}
 
-	//TOdo _db ctor
+	//Allocate memory for students
+	struct stack_t *new_stack_node = stack_new();
+	_db->students = new_stack_node;
+
+	struct student_t *new_student;
+	char reg[1024];
+	//Scan all registers
+	for (int i = 0; i < _db->db_size; i++)
+	{
+		fscanf(file, "%s", reg);
+		new_student = student_parse_reg(reg);
+		stack_ctor(new_stack_node, new_student);
+		stack_push(_db->students, (void *)new_student);
+	}
 }
 
 void file_db_savedb(file_db_t *_db, char *regs)
@@ -139,20 +143,19 @@ void file_db_savedb(file_db_t *_db, char *regs)
 
 void file_db_readall(file_db_t *_db)
 {
-	printf("\n%20s %20s %20s", "Cedula", "Nombre", "Semestre");
-
-	for (int i = 0; i < _db->db_size; i++)
-	{
-		printf("\n%20d %20s %20d",
-			   student_get_id(_db->students[i]),
-			   student_get_name(_db->students[i]),
-			   student_get_semester(_db->students[i]));
+	for(int i = 0; i < _db -> db_size; i++){
+		student_to_string((struct student_t *)_db -> students);
 	}
 }
 
 void file_db_readsize(file_db_t *_db)
 {
-	printf("\nLa base de datos tiene %d registros", _db->db_size);
+	printf("\nLa base de datos tiene %d registros\n", _db->db_size);
+}
+
+void file_db_readfilename(file_db_t *_db)
+{
+	printf("\nDB filename is: %s\n", _db->filename);
 }
 
 void file_db_mkreg(file_db_t *_db, int id, char name[], int semester)
@@ -166,20 +169,8 @@ void file_db_mkreg(file_db_t *_db, int id, char name[], int semester)
 		   student_get_semester(student));
 
 	_db->db_size += 1;
-	//TODO stack for students in file_db
 }
 
 void file_db_readreg(file_db_t *_db, int _id)
 {
-	//Search for id
-	for (int i = 0; i < _db->db_size; i++)
-	{
-		if (student_get_id(_db->students[i]) == _id)
-		{
-			printf("\n%20d %20s %20d",
-				   student_get_id(_db->students[i]),
-				   student_get_name(_db->students[i]),
-				   student_get_semester(_db->students[i]));
-		}
-	}
 }

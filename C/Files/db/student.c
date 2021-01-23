@@ -20,45 +20,55 @@ student_t *student_new()
 }
 
 //Constructor
-void student_ctor(student_t *estudiante,
-                     int id,
-                     char *name,
-                     int semester)
+void student_ctor(student_t *_student,
+                  int _id,
+                  char *_name,
+                  int _semester)
 {
-    estudiante->id = id;
-    strcpy(estudiante->name, name);
-    estudiante->semester = semester;
+
+    _student -> id = _id;
+    _student -> name = (char *)malloc(strlen((_name) + 1) * sizeof(char));
+    strcpy(_student -> name, _name);
+    _student ->semester = _semester;
 }
 
 //Destructor
-void student_dtor(student_t* student){
+void student_dtor(student_t *student)
+{
     free(student);
 }
 
-int student_get_id(student_t *student){
-	return student -> id;
+int student_get_id(student_t *student)
+{
+    return student->id;
 }
 
-char *student_get_name(student_t *student){
-	return student -> name;
+char *student_get_name(student_t *student)
+{
+    return student->name;
 }
 
-int student_get_semester(student_t *student){
-	return student -> semester;
+int student_get_semester(student_t *student)
+{
+    return student->semester;
 }
 
-void student_parse_reg(student_t *student, char *reg){
+void student_to_string(student_t *student)
+{
+    printf("%20d %20s %20d\n",
+           student->id,
+           student->name,
+           student->semester);
+}
+
+student_t *student_parse_reg(char *reg)
+{
     int id;
-	char name[MAX_STUDENT_NAME_SIZE];
-	int semester;
-		
+    char name[MAX_STUDENT_NAME_SIZE];
+    int semester;
+	student_t *new_student = student_new();
+
     sscanf(reg, "%d %s %d", &id, name, &semester);
-    student -> id = id;
-    strcmp(student -> name, name);
-    student -> semester = semester;
+    student_ctor(new_student, id, name, semester);
+    return new_student;
 }
-
-void student_calloc_n(student_t * student, int n){
-    student = calloc(n, sizeof(student_t));
-}
-

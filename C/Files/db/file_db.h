@@ -22,9 +22,10 @@ void *file_db_get_registers(struct file_db_t *);
 //Behaviour functions
 void file_db_mkdb(struct file_db_t *);
 void file_db_loaddb(struct file_db_t *);
-void file_db_savedb(struct file_db_t *, char *regs);
+void file_db_savedb(struct file_db_t *, char *);
 void file_db_readall(struct file_db_t *);
 void file_db_readsize(struct file_db_t *);
+void file_db_readfilename(struct file_db_t *);
 void file_db_mkreg(struct file_db_t *, int, char *, int);
 void file_db_readreg(struct file_db_t *, int);
 void exit();

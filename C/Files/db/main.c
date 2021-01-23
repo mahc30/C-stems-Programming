@@ -37,20 +37,11 @@ int main(void)
 		}
 		else if (strcmp(command, "loaddb") == 0)
 		{
-			printf("TODO IMPLEMENT LOADDB running %s %s", command, arg1);
-			
 			file_db_ctor(file_db, arg1, 0); //Initialize with 0 regs
 			file_db_loaddb(file_db);
-
-			printf("\nDatabase loaded in: %p", file_db );
 			file_db_readsize(file_db);
 			file_db_readall(file_db);
-			// Para verificar que el puntero está bien o los datos whatever u want
-			/*
-			  for(int i = 0; i < 2; i++){
-				printf("\nCedula: %dNombre: %sSemestre: %d", (file_db+i)->cedula,(file_db+i)->nombre,(file_db+i)->semestre);
-				}
-			 */
+	
 		}
 		else if (strcmp(command, "savedb") == 0 && db_loaded)
 		{

@@ -5,23 +5,24 @@
 struct student_t;
 
 //Memory Allocator
-struct student_t* student_new();
+struct student_t *student_new();
 
 //Constructor
-void student_ctor(struct student_t*, 
-                            const int /*id*/,
-                            const char* /*name*/,
-                            const int /*semester*/);
+void student_ctor(struct student_t *,
+                  const int /*id*/,
+                  const char * /*name*/,
+                  const int /*semester*/);
 
 //Destructor
-void student_dtor(struct student_t*);
+void student_dtor(struct student_t *);
 
 //Behaviour functions
-int student_get_id(struct student_t*);
-char* student_get_name(struct student_t*);
-int student_get_semester(struct student_t*);
-void student_parse_reg(struct student_t*, char *);
-char *student_create_register(struct student_t*);
-void student_calloc_n(struct student_t *, int n);
+int student_get_id(struct student_t *);
+char *student_get_name(struct student_t *);
+int student_get_semester(struct student_t *);
+void student_to_string(struct student_t *);
+struct student_t *student_parse_reg(char *);
+char *student_create_register(struct student_t *);
+void student_calloc_n(struct student_t *, unsigned int);
 
 #endif
