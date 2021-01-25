@@ -24,5 +24,6 @@ void student_to_string(struct student_t *);
 struct student_t *student_parse_reg(char *);
 char *student_create_register(struct student_t *);
 void student_calloc_n(struct student_t *, unsigned int);
+size_t student_get_struct_size();
 
 #endif

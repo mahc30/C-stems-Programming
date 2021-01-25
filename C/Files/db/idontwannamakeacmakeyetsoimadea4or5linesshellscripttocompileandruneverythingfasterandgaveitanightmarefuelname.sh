@@ -1,4 +1,5 @@
 #!/bin/bash
+rm ./*.o
 
 #Compile individual files
 gcc -c stack.c -o stack.o

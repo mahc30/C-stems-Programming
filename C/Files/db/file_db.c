@@ -38,6 +38,7 @@ Cada comando deberá implementarse como una función.
 #include <stdbool.h>
 #include <string.h>
 #include "constants.h"
+#include "student.h"
 #include "stack.h"
 
 //private definition
@@ -60,6 +61,8 @@ void file_db_ctor(file_db_t *_db,
 	_db->filename = (char *)malloc(strlen((_filename) + 1) * sizeof(char));
 	strcpy(_db->filename, _filename);
 	_db->db_size = _db_size;
+	struct stack_t *stack_node = stack_new();
+	_db->students = stack_node;
 }
 
 void file_db_dtor(file_db_t *_db)
@@ -97,6 +100,7 @@ void file_db_mkdb(file_db_t *_db)
 
 void file_db_loaddb(file_db_t *_db)
 {
+	char reg[1024];
 	char path[MAX_FILENAME_SIZE + 16];
 	strcpy(path, FILE_SERVICE_PATH);
 	strcat(path, _db->filename);
@@ -109,25 +113,31 @@ void file_db_loaddb(file_db_t *_db)
 	}
 
 	//Read File db_size, Because of format is always the first line
-	if (fscanf(file, "%u", &(_db->db_size)) != 1)
+	if (fgets(reg, 1024, file) == NULL)
+	{
+		puts("Error reading the file");
+		return;
+	}
+
+	if (sscanf(reg, "%u", &(_db->db_size)) != 1)
 	{
 		perror("LOADDB, ERROR READING FILE");
 	}
 
-	//Allocate memory for students
-	struct stack_t *new_stack_node = stack_new();
-	_db->students = new_stack_node;
-
 	struct student_t *new_student;
-	char reg[1024];
-	//Scan all registers
+
+	//Scan the rest of the file
 	for (int i = 0; i < _db->db_size; i++)
 	{
-		fscanf(file, "%s", reg);
+		//TODO refactor this into a function hehe
+		fgets(reg, sizeof(reg), file);
+		reg[sizeof(reg) - 1] = '\n';
+
 		new_student = student_parse_reg(reg);
-		stack_ctor(new_stack_node, new_student);
-		stack_push(_db->students, (void *)new_student);
+		stack_push(_db->students, new_student);
 	}
+
+	puts("DB loaded");
 }
 
 void file_db_savedb(file_db_t *_db, char *regs)
@@ -143,9 +153,23 @@ void file_db_savedb(file_db_t *_db, char *regs)
 
 void file_db_readall(file_db_t *_db)
 {
-	for(int i = 0; i < _db -> db_size; i++){
-		student_to_string((struct student_t *)_db -> students);
+
+	//TODO Apparently i should have made a deque as i need to iterate over it
+	//And stacks / queues are not really made for iteration (Who would have thought...)
+	//So we are doing the just download more ram way
+	//btw solo funciona una vez PORQUE NO ES LA ESTRUCTURA ADECUADA PLS FIX IT
+
+	struct stack_t *students = _db->students;
+	unsigned int student_struct_size = student_get_struct_size();
+	struct student_t *student;
+
+	for (int i = 0; i < _db->db_size; i++)
+	{
+		student = (struct student_t *)stack_pop(students, student_get_struct_size());
+		student_to_string(student);
 	}
+
+	//Podría hacer un save_db y luego un load_db... así le tiro más duro a procesador y memoria pero funciona uwu
 }
 
 void file_db_readsize(file_db_t *_db)
@@ -162,15 +186,16 @@ void file_db_mkreg(file_db_t *_db, int id, char name[], int semester)
 {
 	struct student_t *student = student_new();
 	student_ctor(student, id, name, semester);
+	puts("Adding student: ");
+	student_to_string(student);
 
-	printf("\nTODO STACK FOR MKREG\n Tried Adding new student:\n %20d %20s %20d",
-		   student_get_id(student),
-		   student_get_name(student),
-		   student_get_semester(student));
-
-	_db->db_size += 1;
+	stack_push(_db -> students, student);
 }
 
 void file_db_readreg(file_db_t *_db, int _id)
 {
+}
+
+void file_db_inc_size(file_db_t *_db){
+	_db -> db_size = _db -> db_size + 1;
 }

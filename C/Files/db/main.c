@@ -6,6 +6,8 @@
 #include "student.h"
 #include "file_db.h"
 
+void salir(bool *);
+
 int main(void)
 {
 	struct file_db_t *file_db = file_db_new();
@@ -39,9 +41,6 @@ int main(void)
 		{
 			file_db_ctor(file_db, arg1, 0); //Initialize with 0 regs
 			file_db_loaddb(file_db);
-			file_db_readsize(file_db);
-			file_db_readall(file_db);
-	
 		}
 		else if (strcmp(command, "savedb") == 0 && db_loaded)
 		{
@@ -60,13 +59,13 @@ int main(void)
 		}
 		else if (strcmp(command, "mkreg") == 0 && db_loaded)
 		{
-			printf("\nrunning %s %s %s %s", command, arg1, arg2, arg3);
 			int db_size;
 			int s_reg;
 			db_size = atoi(arg1);
 			s_reg = atoi(arg3);
 
 			file_db_mkreg(file_db, db_size, arg2, s_reg);
+			file_db_inc_size(file_db);
 		}
 		else if (strcmp(command, "readreg") == 0 && db_loaded)
 		{

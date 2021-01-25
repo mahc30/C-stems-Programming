@@ -33,36 +33,37 @@ void student_ctor(student_t *_student,
 }
 
 //Destructor
-void student_dtor(student_t *student)
+void student_dtor(student_t *_student)
 {
-    free(student);
+    free(_student);
 }
 
-int student_get_id(student_t *student)
+int student_get_id(student_t *_student)
 {
-    return student->id;
+    return _student->id;
 }
 
-char *student_get_name(student_t *student)
+char *student_get_name(student_t *_student)
 {
-    return student->name;
+    return _student->name;
 }
 
-int student_get_semester(student_t *student)
+int student_get_semester(student_t *_student)
 {
-    return student->semester;
+    return _student->semester;
 }
 
-void student_to_string(student_t *student)
+void student_to_string(student_t *_student)
 {
-    printf("%20d %20s %20d\n",
-           student->id,
-           student->name,
-           student->semester);
+    printf("%20u %20s %20u\n",
+           _student->id,
+           _student->name,
+           _student->semester);
 }
 
 student_t *student_parse_reg(char *reg)
 {
+
     int id;
     char name[MAX_STUDENT_NAME_SIZE];
     int semester;
@@ -70,5 +71,10 @@ student_t *student_parse_reg(char *reg)
 
     sscanf(reg, "%d %s %d", &id, name, &semester);
     student_ctor(new_student, id, name, semester);
+
     return new_student;
+}
+
+size_t student_get_struct_size(){
+    return sizeof(student_t);
 }
