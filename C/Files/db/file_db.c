@@ -161,14 +161,24 @@ void file_db_readall(file_db_t *_db)
 
 	struct stack_t *students = _db->students;
 	unsigned int student_struct_size = student_get_struct_size();
+
+	//I'm freeing the other stack node with each pop so
+	//im creating a copy of that stack to keep integrity
+	//it's a temporal fix pls dont hate
+	
+	struct stack_t *copy;
+	copy = stack_new();
+
 	struct student_t *student;
 
 	for (int i = 0; i < _db->db_size; i++)
 	{
 		student = (struct student_t *)stack_pop(students, student_get_struct_size());
+		stack_push(copy, student);
 		student_to_string(student);
 	}
 
+	_db->students = copy;
 	//Podría hacer un save_db y luego un load_db... así le tiro más duro a procesador y memoria pero funciona uwu
 }
 
@@ -189,13 +199,14 @@ void file_db_mkreg(file_db_t *_db, int id, char name[], int semester)
 	puts("Adding student: ");
 	student_to_string(student);
 
-	stack_push(_db -> students, student);
+	stack_push(_db->students, student);
 }
 
 void file_db_readreg(file_db_t *_db, int _id)
 {
 }
 
-void file_db_inc_size(file_db_t *_db){
-	_db -> db_size = _db -> db_size + 1;
+void file_db_inc_size(file_db_t *_db)
+{
+	_db->db_size = _db->db_size + 1;
 }
