@@ -37,15 +37,16 @@ Cada comando deberá implementarse como una función.
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <constants.h>
-#include <student.h>
+#include "constants.h"
+#include "student.h"
+#include "stack.h"
 
 //private definition
 typedef struct
 {
-	int db_size;
+	unsigned int db_size;
 	char *filename;
-	struct student_t *students[];
+	struct stack_t *students;
 } file_db_t;
 
 file_db_t *file_db_new()
@@ -53,108 +54,179 @@ file_db_t *file_db_new()
 	return (file_db_t *)malloc(sizeof(file_db_t));
 }
 
-void file_db_ctor(file_db_t *db,
-				  int _db_size,
-				  char *_filename)
+void file_db_ctor(file_db_t *_db,
+				  char *_filename,
+				  int _db_size)
 {
-	db->db_size = db_size;
-	strcpy(db->filename, _filename);
+	_db->filename = (char *)malloc(strlen((_filename) + 1) * sizeof(char));
+	strcpy(_db->filename, _filename);
+	_db->db_size = _db_size;
+	struct stack_t *stack_node = stack_new();
+	_db->students = stack_node;
 }
 
-void file_db_dtor(file_db_t *db)
+void file_db_dtor(file_db_t *_db)
 {
-	for (int i = 0; i < db->db_size; i++)
+	for (int i = 0; i < _db->db_size; i++)
 	{
-		free(db->students[i]);
+		free(_db->students);
 	}
-	free(db);
+	free(_db);
 }
 
-void *file_db_get_registers(file_db_t *db)
+void *file_db_get_registers(file_db_t *_db)
 {
-	return db->students;
+	return _db->students;
 }
 
-void file_db_mkdb(file_db_t *db, int db_file_size)
+void file_db_mkdb(file_db_t *_db)
 {
-	char db_file_path[100] = FILE_SERVICE_PATH;
-	strcat(db_file_path, db->filename);
+	char db_file_path[100];
+	strcpy(db_file_path, FILE_SERVICE_PATH);
+	strcat(db_file_path, _db->filename);
 
 	FILE *file = fopen(db_file_path, "w");
+	if (file == NULL)
+	{
+		perror("MKDB, ERROR CREATING FILE");
+	}
 
-	file_db_ctor(db, db->db_size, db_file_path);
-	fprintf(file, "%d", db_file_size);
+	file_db_ctor(_db, db_file_path, _db->db_size);
+	fprintf(file, "%d", _db->db_size);
 	fclose(file);
 
 	puts("\nDb Created");
 }
 
-void file_loaddb(file_db_t *db, char *_db_name)
+void file_db_loaddb(file_db_t *_db)
 {
-	db = fopen(_db_name, "r");
+	char reg[1024];
+	char path[MAX_FILENAME_SIZE + 16];
+	strcpy(path, FILE_SERVICE_PATH);
+	strcat(path, _db->filename);
+
+	FILE *file = fopen(path, "r");
+	if (file == NULL)
+	{
+		perror("LOADDB, ERROR READING FILE");
+		return;
+	}
+
+	//Read File db_size, Because of format is always the first line
+	if (fgets(reg, 1024, file) == NULL)
+	{
+		puts("Error reading the file");
+		return;
+	}
+
+	if (sscanf(reg, "%u", &(_db->db_size)) != 1)
+	{
+		perror("LOADDB, ERROR READING FILE");
+	}
+
+	struct student_t *new_student;
+
+	//Scan the rest of the file
+	for (int i = 0; i < _db->db_size; i++)
+	{
+		//TODO refactor this into a function hehe
+		fgets(reg, sizeof(reg), file);
+		reg[sizeof(reg) - 1] = '\n';
+
+		new_student = student_parse_reg(reg);
+		stack_push(&(_db->students), new_student);
+	}
+
+	puts("DB loaded");
 }
 
-void file_db_savedb(file_db_t *db, char *regs)
+void file_db_savedb(file_db_t *_db, char *regs)
 {
-	FILE *save_file = fopen(db->filename, "w");
-	printf("\nSaving DB in: %s", db->filename);
-	fprintf(save_file, db->db_size);
-	fprintf(save_file, regs);
+	FILE *save_file = fopen(_db->filename, "w");
+	printf("\nSaving DB in: %s", _db->filename);
+	fprintf(save_file, "%d", _db->db_size);
+	fprintf(save_file, "%s", regs);
 
 	fclose(save_file);
 	puts("Db Saved :D");
 }
 
-void file_db_readall(file_db_t *db)
+void file_db_readall(file_db_t *_db)
 {
-	printf("\n%20s %20s %20s", "Cedula", "Nombre", "Semestre");
 
-	for (int i = 0; i < db->db_size; i++)
+	//TODO Apparently i should have made a deque as i need to iterate over it
+	//And stacks / queues are not really made for iteration (Who would have thought...)
+	//So we are doing the just download more ram way
+	//btw solo funciona una vez PORQUE NO ES LA ESTRUCTURA ADECUADA PLS FIX IT
+	//The Actual Solution:
+	//I'm freeing the other stack node with each pop so
+	//im creating a copy of that stack to keep integrity
+	//it's a temporal fix pls dont hate
+
+	struct stack_t *students = _db->students;
+	struct stack_t *copy;
+	copy = stack_new();
+
+	struct student_t *student;
+
+	for (int i = 0; i < _db->db_size; i++)
 	{
-		printf("\n%20d %20s %20d",
-			   db->students[i]->id,
-			   db->students[i]->name,
-			   db->students[i]->semester);
+		student = (struct student_t *)stack_pop(&students, student_get_struct_size());
+		stack_push(&copy, student);
+		student_to_string(student);
 	}
+
+	_db->students = copy;
+	//Podría hacer un save_db y luego un load_db... así le tiro más duro a procesador y memoria pero funciona uwu
 }
 
-void file_db_readsize(file_db_t *db)
+void file_db_readsize(file_db_t *_db)
 {
-	printf("\nLa base de datos tiene %d registros", db->db_size);
+	printf("\nLa base de datos tiene %d registros\n", _db->db_size);
 }
 
-void file_db_mkreg(file_db_t *db, int id, char name[], int semester)
+void file_db_readfilename(file_db_t *_db)
 {
+	printf("\nDB filename is: %s\n", _db->filename);
+}
 
-	//Inicialización de la estructura
+void file_db_mkreg(file_db_t *_db, int id, char name[], int semester)
+{
 	struct student_t *student = student_new();
 	student_ctor(student, id, name, semester);
+	puts("Adding student: ");
+	student_to_string(student);
 
-	void *realloc_buffer = realloc(db->students, sizeof(student_t) * db_size);
-	if (realloc_buffer == NULL)
-	{
-		perror("Error Reallocating Memory. MKREG");
-	}
-	else
-	{
-		db->db_size += 1;
-		db->students = realloc_buffer;
-		db->students[db_size] = student; //Push to end
-										 //TODO make it a stack lol
-	}
+	stack_push(&(_db->students), student);
 }
 
-void file_db_readreg(file_db_t *db, int _id)
+void file_db_readreg(file_db_t *_db, int _id)
 {
-	//Search for id
-	for (int i = 0; i < db->db_size; i++)
+
+	//Same solution as in file_db_readall
+	struct stack_t *students = _db->students;
+	struct stack_t *copy;
+	copy = stack_new();
+
+	struct student_t *student;
+
+	for (int i = 0; i < _db->db_size; i++)
 	{
-		if (db->students[i]->id == _id)
+		student = (struct student_t *)stack_pop(&students, student_get_struct_size());
+		stack_push(&copy, student);
+
+		if (student_get_id(student) == _id)
 		{
-			printf("\n%20d %20s %20d",
-				   db->students[i]->id,
-				   db->students[i]->name,
-				   db->students[i]->semester);
+			student_to_string(student);
+			break;
 		}
 	}
+
+	puts("Student not found");
+	_db->students = copy;
+}
+
+void file_db_inc_size(file_db_t *_db)
+{
+	_db->db_size = _db->db_size + 1;
 }

@@ -1,29 +1,33 @@
 #ifndef FILE_SERVICE_H
 #define FILE_SERVICE_H
 
+//Forward Declarations
 struct file_db_t;
 
 //Memory Allocator
 struct file_db_t *file_db_new();
 
 //Constructor
-void file_db_ctor(struct file_db_t * obj,
-                  int db_size,
-                  char * filename);
+void file_db_ctor(struct file_db_t * /*obj*/,
+                  char *, /*filename*/
+                  int     /* db_size */
+);
 
 //Destructor
-void file_db_dtor(struct file_db *);
+void file_db_dtor(struct file_db_t *);
 
-void *file_db_get_registers(struct file_db *); 
+void *file_db_get_registers(struct file_db_t *);
+
 //Behaviour functions
-void file_db_mkdb(struct file_db *);
-void file_db_loaddb(struct file_db *, char *);
-void file_db_savedb(struct file_db *, char *regs);
-void file_db_readall(struct file_db *);
-void file_db_readsize(struct file_db *);
-void file_db_mkreg(struct file_db *, int, char *, int);
-void file_db_readreg(struct file_db *, int);
-void exit();
+void file_db_mkdb(struct file_db_t *);
+void file_db_loaddb(struct file_db_t *);
+void file_db_savedb(struct file_db_t *, char *);
+void file_db_readall(struct file_db_t *);
+void file_db_readsize(struct file_db_t *);
+void file_db_readfilename(struct file_db_t *);
+void file_db_mkreg(struct file_db_t **, int, char *, int);
+void file_db_readreg(struct file_db_t *, int);
+void file_db_inc_size(struct file_db_t *_db);
 
 #endif
 
