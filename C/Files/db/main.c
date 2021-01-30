@@ -5,6 +5,7 @@
 #include "constants.h"
 #include "student.h"
 #include "file_db.h"
+#include "helpers.h"
 
 void salir(bool *);
 
@@ -28,6 +29,11 @@ int main(void)
 		printf("\n%c", '>');
 		strcpy(command, "");
 		fgets(instruction_buffer, MAX_INSTRUCTION_SIZE, stdin);
+		if(!helpers_sanitize_string(instruction_buffer)){
+			puts("Invalid Command");
+			continue;
+		}
+		
 		sscanf(instruction_buffer, "%9s %30s %30s %2s", command, arg1, arg2, arg3);
 
 		if (strcmp(command, "mkdb") == 0)
@@ -44,17 +50,15 @@ int main(void)
 		}
 		else if (strcmp(command, "savedb") == 0 && db_loaded)
 		{
-			printf("\nrunning %s %s", command, arg1);
+			printf("\nTODO running %s %s", command, arg1);
 			file_db_savedb(file_db, arg1);
 		}
 		else if (strcmp(command, "readall") == 0 && db_loaded)
 		{
-			puts("\nrunning readall");
 			file_db_readall(file_db);
 		}
 		else if (strcmp(command, "readsize") == 0 && db_loaded)
 		{
-			puts("\nrunning readsize");
 			file_db_readsize(file_db);
 		}
 		else if (strcmp(command, "mkreg") == 0 && db_loaded)
@@ -64,12 +68,11 @@ int main(void)
 			db_size = atoi(arg1);
 			s_reg = atoi(arg3);
 
-			file_db_mkreg(file_db, db_size, arg2, s_reg);
+			file_db_mkreg(&file_db, db_size, arg2, s_reg);
 			file_db_inc_size(file_db);
 		}
 		else if (strcmp(command, "readreg") == 0 && db_loaded)
 		{
-			printf("\nrunning %s %s", command, arg1);
 			file_db_readreg(file_db, atoi(arg1));
 		}
 		else if (strcmp(command, "exit") == 0)
@@ -90,16 +93,7 @@ int main(void)
 	return (0);
 }
 
-//Función auxiliar para castear strings a enteros
-char *itoa(int num, char *str)
-{
-	if (str == NULL)
-	{
-		return NULL;
-	}
-	sprintf(str, "%d", num);
-	return str;
-}
+
 
 void salir(bool *exit);
 void salir(bool *exit)

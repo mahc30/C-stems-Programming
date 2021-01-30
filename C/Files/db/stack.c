@@ -60,7 +60,7 @@ void *stack_pop(stack_t **_stack, unsigned int _dealloc_size)
     return data;
 }
 
-void *stack_peek(stack_t *_stack)
+stack_t *stack_peek(stack_t *_stack)
 {
     if (stack_is_empty(_stack))
         return NULL;
