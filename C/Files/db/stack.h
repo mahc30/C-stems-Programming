@@ -13,7 +13,6 @@ void stack_ctor(struct stack_t *, void *);
 bool stack_is_empty(struct stack_t *);
 void stack_push(struct stack_t **, void *);
 void *stack_pop(struct stack_t **, unsigned int);
-void *stack_peek(struct stack_t *);
-void *stack_make_copy(struct stack_t *, unsigned int);
+struct stack *stack_peek(struct stack_t *);
 
 #endif

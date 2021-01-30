@@ -134,7 +134,7 @@ void file_db_loaddb(file_db_t *_db)
 		reg[sizeof(reg) - 1] = '\n';
 
 		new_student = student_parse_reg(reg);
-		stack_push(_db->students, new_student);
+		stack_push(&(_db->students), new_student);
 	}
 
 	puts("DB loaded");
@@ -158,17 +158,25 @@ void file_db_readall(file_db_t *_db)
 	//And stacks / queues are not really made for iteration (Who would have thought...)
 	//So we are doing the just download more ram way
 	//btw solo funciona una vez PORQUE NO ES LA ESTRUCTURA ADECUADA PLS FIX IT
+	//The Actual Solution:
+	//I'm freeing the other stack node with each pop so
+	//im creating a copy of that stack to keep integrity
+	//it's a temporal fix pls dont hate
 
 	struct stack_t *students = _db->students;
-	unsigned int student_struct_size = student_get_struct_size();
+	struct stack_t *copy;
+	copy = stack_new();
+
 	struct student_t *student;
 
 	for (int i = 0; i < _db->db_size; i++)
 	{
-		student = (struct student_t *)stack_pop(students, student_get_struct_size());
+		student = (struct student_t *)stack_pop(&students, student_get_struct_size());
+		stack_push(&copy, student);
 		student_to_string(student);
 	}
 
+	_db->students = copy;
 	//Podría hacer un save_db y luego un load_db... así le tiro más duro a procesador y memoria pero funciona uwu
 }
 
@@ -189,13 +197,36 @@ void file_db_mkreg(file_db_t *_db, int id, char name[], int semester)
 	puts("Adding student: ");
 	student_to_string(student);
 
-	stack_push(_db -> students, student);
+	stack_push(&(_db->students), student);
 }
 
 void file_db_readreg(file_db_t *_db, int _id)
 {
+
+	//Same solution as in file_db_readall
+	struct stack_t *students = _db->students;
+	struct stack_t *copy;
+	copy = stack_new();
+
+	struct student_t *student;
+
+	for (int i = 0; i < _db->db_size; i++)
+	{
+		student = (struct student_t *)stack_pop(&students, student_get_struct_size());
+		stack_push(&copy, student);
+
+		if (student_get_id(student) == _id)
+		{
+			student_to_string(student);
+			break;
+		}
+	}
+
+	puts("Student not found");
+	_db->students = copy;
 }
 
-void file_db_inc_size(file_db_t *_db){
-	_db -> db_size = _db -> db_size + 1;
+void file_db_inc_size(file_db_t *_db)
+{
+	_db->db_size = _db->db_size + 1;
 }
