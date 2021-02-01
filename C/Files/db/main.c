@@ -18,12 +18,12 @@ int main(void)
 	char command[MAX_COMMAND_SIZE];
 	char arg1[MAX_FILENAME_SIZE];
 	char arg2[MAX_FILENAME_SIZE];
-	char arg3[MAX_SEMESTER_ARG_SIZE];
+	char arg3[MAX_STUDENT_SEMESTER_ARG_SIZE];
 	bool exit_flag = false;
 
-	//Scan for Instructions
 	puts("¡Wilkommen!");
 	
+	//Scan for Instructions
 	while (!exit_flag)
 	{
 		printf("\n%c", '>');
@@ -63,12 +63,12 @@ int main(void)
 		}
 		else if (strcmp(command, "mkreg") == 0 && db_loaded)
 		{
-			int db_size;
-			int s_reg;
-			db_size = atoi(arg1);
-			s_reg = atoi(arg3);
+			int id = atoi(arg1);
+			char *name = arg2;
+			int semester = atoi(arg3);
+			
 
-			file_db_mkreg(&file_db, db_size, arg2, s_reg);
+			file_db_mkreg(file_db, id, name, semester);
 			file_db_inc_size(file_db);
 		}
 		else if (strcmp(command, "readreg") == 0 && db_loaded)

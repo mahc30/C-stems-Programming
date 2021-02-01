@@ -25,8 +25,8 @@ void file_db_savedb(struct file_db_t *, char *);
 void file_db_readall(struct file_db_t *);
 void file_db_readsize(struct file_db_t *);
 void file_db_readfilename(struct file_db_t *);
-void file_db_mkreg(struct file_db_t **, int, char *, int);
-void file_db_readreg(struct file_db_t *, int);
+void file_db_mkreg(struct file_db_t *, int, char *, int);
+struct student_t *file_db_readreg(struct file_db_t *, int);
 void file_db_inc_size(struct file_db_t *_db);
 
 #endif
