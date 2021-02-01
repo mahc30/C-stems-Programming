@@ -20,7 +20,7 @@ void student_dtor(struct student_t *);
 int student_get_id(struct student_t *);
 char *student_get_name(struct student_t *);
 int student_get_semester(struct student_t *);
-void student_to_string(struct student_t *);
+char *student_to_string(struct student_t *);
 struct student_t *student_parse_reg(char *);
 char *student_create_register(struct student_t *);
 void student_calloc_n(struct student_t *, unsigned int);

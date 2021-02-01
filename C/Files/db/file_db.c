@@ -140,12 +140,40 @@ void file_db_loaddb(file_db_t *_db)
 	puts("DB loaded");
 }
 
-void file_db_savedb(file_db_t *_db, char *regs)
+void file_db_savedb(file_db_t *_db)
 {
-	FILE *save_file = fopen(_db->filename, "w");
-	printf("\nSaving DB in: %s", _db->filename);
-	fprintf(save_file, "%d", _db->db_size);
-	fprintf(save_file, "%s", regs);
+
+	int db_size = _db->db_size;
+	char path[MAX_FILENAME_SIZE + 24];
+	strcpy(path, FILE_SERVICE_PATH);
+	strcat(path, _db->filename);
+	strcat(path, "saved");
+
+	FILE *save_file = fopen(path, "w");
+
+	printf("\nSaving DB in: %s", path);
+
+	//Obligatory first line size of db
+	fprintf(save_file, "%d\n", _db->db_size);
+
+	struct stack_t *students = _db->students;
+
+	struct stack_t *copy = stack_new();
+	char *student_reg;
+
+	struct student_t *student;
+
+	for (int i = 0; i < _db->db_size; i++)
+	{
+		student = (struct student_t *)stack_pop(&students, student_get_struct_size());
+		stack_push(&copy, student);
+
+		student_reg = student_to_string(student);
+		fprintf(save_file, "%s\n", student_reg);
+		free(student_reg);
+	}
+
+	_db->students = copy;
 
 	fclose(save_file);
 	puts("Db Saved :D");
@@ -164,16 +192,17 @@ void file_db_readall(file_db_t *_db)
 	//it's a temporal fix pls dont hate
 
 	struct stack_t *students = _db->students;
-	struct stack_t *copy;
-	copy = stack_new();
+	struct stack_t *copy = stack_new();
 
 	struct student_t *student;
+	char *student_reg;
 
 	for (int i = 0; i < _db->db_size; i++)
 	{
 		student = (struct student_t *)stack_pop(&students, student_get_struct_size());
 		stack_push(&copy, student);
-		student_to_string(student);
+		student_reg = student_to_string(student);
+		printf("%s\n", student_reg);
 	}
 
 	_db->students = copy;
@@ -193,14 +222,17 @@ void file_db_readfilename(file_db_t *_db)
 void file_db_mkreg(file_db_t *_db, int id, char name[], int semester)
 {
 	struct student_t *student = student_new();
+	char *student_reg;
+
 	student_ctor(student, id, name, semester);
 	puts("Adding student: ");
-	student_to_string(student);
+	student_reg = student_to_string(student);
+	printf("%s", student_reg);
 
 	stack_push(&(_db->students), student);
 }
 
-void file_db_readreg(file_db_t *_db, int _id)
+struct student_t *file_db_readreg(file_db_t *_db, int _id)
 {
 
 	//Same solution as in file_db_readall
@@ -209,7 +241,9 @@ void file_db_readreg(file_db_t *_db, int _id)
 	copy = stack_new();
 
 	struct student_t *student;
+	char *student_reg;
 
+	bool found = false;
 	for (int i = 0; i < _db->db_size; i++)
 	{
 		student = (struct student_t *)stack_pop(&students, student_get_struct_size());
@@ -217,12 +251,16 @@ void file_db_readreg(file_db_t *_db, int _id)
 
 		if (student_get_id(student) == _id)
 		{
-			student_to_string(student);
+			student_reg = student_to_string(student);
+			printf("%s\n", student_reg);
+			found = true;
 			break;
 		}
 	}
 
-	puts("Student not found");
+	if (!found)
+		puts("Student not found");
+	
 	_db->students = copy;
 }
 
