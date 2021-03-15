@@ -21,7 +21,7 @@ fn read(input: &mut String) {
 }
 
 fn es_mayor(a: i32, b: i32) -> bool {
-    a > b
+    return a > b;
 }
 
 fn sort(arr: &mut Vec<i32>, len: usize) {

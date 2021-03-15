@@ -3,15 +3,15 @@ extern crate ferris_says;
 use ferris_says::say;
 use std::io::{stdin, stdout, Write};
 
-fn read(input: &mut String) {
+fn read_user_input(input: &mut String) {
     stdout().flush().expect("Couldn't flush buffer");
-    stdin().read_line(input).expect("Failed to read");
+    stdin().read_line(input).expect("Failed to read_user_input");
 }
 
 fn read_num(num: &mut f32) -> bool{
     stdout().flush().expect("Couldn't flush buffer");
     let mut buffer: String = String::new();
-    read(&mut buffer);
+    read_user_input(&mut buffer);
 
     match buffer.trim().parse::<f32>() {
         Ok(res) => {
@@ -46,7 +46,7 @@ fn main() {
         if !read_num(&mut num2) {continue;}
 
         print!("Escribe la operación que quieres realizar (+ - * /): ");
-        read(&mut buffer);
+        read_user_input(&mut buffer);
         let mut op: char = buffer.trim().chars().next().unwrap();
 
         // Validamos que la operación sea válida
@@ -69,7 +69,7 @@ fn main() {
 
         println!("¿Continuar? (S/N)");
         buffer = String::new(); // Limpiamos el buffer
-        read(&mut buffer);
+        read_user_input(&mut buffer);
         op = buffer.trim().to_lowercase().chars().next().unwrap();
         status = op != 'n';
     }
