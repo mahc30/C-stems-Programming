@@ -8,4 +8,5 @@ fn main() {
     io::stdin().read_line(&mut input).expect("Failed to read");
 
     println!("Usted escribió: {}", input);
+
 }
