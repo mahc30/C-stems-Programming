@@ -51,6 +51,7 @@ fn main() {
 
     // Formatear ruta del archivo
     let path: String = format!("./{}.txt", name.trim());
+    
     // Leer archivo
     let buffer: String = match fs::read_to_string(path.trim()) {
         Ok(buffer) => buffer,
