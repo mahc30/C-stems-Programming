@@ -26,7 +26,7 @@ fn main() {
         let buffer: Vec<u8> = input.as_bytes().to_vec();
         
         for i in 0..buffer.capacity(){
-            println!("{:#04X}", buffer[i]);
+            println!("{:#X}", buffer[i]);
         }
 
         break;
@@ -43,5 +43,5 @@ fn main() {
     let key_to_hex = key as u32; //Casteo Explícito
     
    
-    println!("{} Key to Hex {:#04X}", key, key_to_hex); 
+    println!("{} Key to Hex {:#X}", key, key_to_hex); 
 }

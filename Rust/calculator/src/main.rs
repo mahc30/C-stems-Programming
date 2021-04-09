@@ -1,15 +1,15 @@
 extern crate ferris_says;
 
 use ferris_says::say;
-use std::io::{stdin, stdout, Write};
+use std::io::{stdin, stdout};
 
 fn read_user_input(input: &mut String) {
-    stdout().flush().expect("Couldn't flush buffer");
+    input.clear();
     stdin().read_line(input).expect("Failed to read_user_input");
 }
 
 fn read_num(num: &mut f32) -> bool{
-    stdout().flush().expect("Couldn't flush buffer");
+
     let mut buffer: String = String::new();
     read_user_input(&mut buffer);
 
@@ -39,13 +39,13 @@ fn main() {
         let mut num1 : f32 = 0.0;
         let mut num2 : f32 = 0.0; 
 
-        print!("\nEscribe el primer Número: ");
+        println!("\nEscribe el primer Número: ");
         if !read_num(&mut num1) {continue;}
 
-        print!("Escribe el segundo Número: ");
+        println!("Escribe el segundo Número: ");
         if !read_num(&mut num2) {continue;}
 
-        print!("Escribe la operación que quieres realizar (+ - * /): ");
+        println!("Escribe la operación que quieres realizar (+ - * /): ");
         read_user_input(&mut buffer);
         let mut op: char = buffer.trim().chars().next().unwrap();
 
@@ -57,7 +57,6 @@ fn main() {
             continue;
         }
 
-        //  Switch-Case
         let result = match op {
             '+' => num1 + num2,
             '-' => num1 - num2,
@@ -68,7 +67,6 @@ fn main() {
         println!("Resultado: {} {} {} = {}", num1, op, num2, result);
 
         println!("¿Continuar? (S/N)");
-        buffer = String::new(); // Limpiamos el buffer
         read_user_input(&mut buffer);
         op = buffer.trim().to_lowercase().chars().next().unwrap();
         status = op != 'n';
