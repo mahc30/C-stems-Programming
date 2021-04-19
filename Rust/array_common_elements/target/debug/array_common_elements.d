@@ -1,0 +1,1 @@
+/home/aaaa/sistemasoperativos/C-stems-Programming/Rust/array_common_elements/target/debug/array_common_elements: /home/aaaa/sistemasoperativos/C-stems-Programming/Rust/array_common_elements/src/main.rs
