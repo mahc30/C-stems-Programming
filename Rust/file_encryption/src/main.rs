@@ -16,9 +16,7 @@ fn main() {
     let out_file = String::from(instructions[1].clone().trim());
     let function = String::from(instructions[2].clone().trim());
 
-    let path: String = format!("./{}.txt", in_file.trim());
-
-    let in_file_buffer = fs::read_to_string(path).expect("Error leyendo el archivo");
+    let in_file_buffer = fs::read_to_string(in_file).expect("Error leyendo el archivo");
 
     // Abrir archivo de salida
     let mut out = OpenOptions::new()
