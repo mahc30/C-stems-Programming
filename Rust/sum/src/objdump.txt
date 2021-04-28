@@ -1,0 +1,467 @@
+
+libsum.so:     file format elf64-x86-64
+
+
+Disassembly of section .init:
+
+0000000000001000 <_init>:
+    1000:	f3 0f 1e fa          	endbr64 
+    1004:	48 83 ec 08          	sub    $0x8,%rsp
+    1008:	48 8b 05 b1 2f 00 00 	mov    0x2fb1(%rip),%rax        # 3fc0 <__gmon_start__>
+    100f:	48 85 c0             	test   %rax,%rax
+    1012:	74 02                	je     1016 <_init+0x16>
+    1014:	ff d0                	callq  *%rax
+    1016:	48 83 c4 08          	add    $0x8,%rsp
+    101a:	c3                   	retq   
+
+Disassembly of section .plt:
+
+0000000000001020 <.plt>:
+    1020:	ff 35 62 2f 00 00    	pushq  0x2f62(%rip)        # 3f88 <_GLOBAL_OFFSET_TABLE_+0x8>
+    1026:	ff 25 64 2f 00 00    	jmpq   *0x2f64(%rip)        # 3f90 <_GLOBAL_OFFSET_TABLE_+0x10>
+    102c:	0f 1f 40 00          	nopl   0x0(%rax)
+
+Disassembly of section .plt.got:
+
+0000000000001030 <__cxa_finalize@plt>:
+    1030:	ff 25 b2 2f 00 00    	jmpq   *0x2fb2(%rip)        # 3fe8 <__cxa_finalize@GLIBC_2.2.5>
+    1036:	66 90                	xchg   %ax,%ax
+
+Disassembly of section .text:
+
+0000000000001040 <deregister_tm_clones>:
+    1040:	48 8d 3d c1 2f 00 00 	lea    0x2fc1(%rip),%rdi        # 4008 <completed.8060>
+    1047:	48 8d 05 ba 2f 00 00 	lea    0x2fba(%rip),%rax        # 4008 <completed.8060>
+    104e:	48 39 f8             	cmp    %rdi,%rax
+    1051:	74 15                	je     1068 <deregister_tm_clones+0x28>
+    1053:	48 8b 05 3e 2f 00 00 	mov    0x2f3e(%rip),%rax        # 3f98 <_ITM_deregisterTMCloneTable>
+    105a:	48 85 c0             	test   %rax,%rax
+    105d:	74 09                	je     1068 <deregister_tm_clones+0x28>
+    105f:	ff e0                	jmpq   *%rax
+    1061:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    1068:	c3                   	retq   
+    1069:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+
+0000000000001070 <register_tm_clones>:
+    1070:	48 8d 3d 91 2f 00 00 	lea    0x2f91(%rip),%rdi        # 4008 <completed.8060>
+    1077:	48 8d 35 8a 2f 00 00 	lea    0x2f8a(%rip),%rsi        # 4008 <completed.8060>
+    107e:	48 29 fe             	sub    %rdi,%rsi
+    1081:	48 89 f0             	mov    %rsi,%rax
+    1084:	48 c1 ee 3f          	shr    $0x3f,%rsi
+    1088:	48 c1 f8 03          	sar    $0x3,%rax
+    108c:	48 01 c6             	add    %rax,%rsi
+    108f:	48 d1 fe             	sar    %rsi
+    1092:	74 14                	je     10a8 <register_tm_clones+0x38>
+    1094:	48 8b 05 45 2f 00 00 	mov    0x2f45(%rip),%rax        # 3fe0 <_ITM_registerTMCloneTable>
+    109b:	48 85 c0             	test   %rax,%rax
+    109e:	74 08                	je     10a8 <register_tm_clones+0x38>
+    10a0:	ff e0                	jmpq   *%rax
+    10a2:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+    10a8:	c3                   	retq   
+    10a9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+
+00000000000010b0 <__do_global_dtors_aux>:
+    10b0:	f3 0f 1e fa          	endbr64 
+    10b4:	80 3d 4d 2f 00 00 00 	cmpb   $0x0,0x2f4d(%rip)        # 4008 <completed.8060>
+    10bb:	75 2b                	jne    10e8 <__do_global_dtors_aux+0x38>
+    10bd:	55                   	push   %rbp
+    10be:	48 83 3d 22 2f 00 00 	cmpq   $0x0,0x2f22(%rip)        # 3fe8 <__cxa_finalize@GLIBC_2.2.5>
+    10c5:	00 
+    10c6:	48 89 e5             	mov    %rsp,%rbp
+    10c9:	74 0c                	je     10d7 <__do_global_dtors_aux+0x27>
+    10cb:	48 8b 3d 2e 2f 00 00 	mov    0x2f2e(%rip),%rdi        # 4000 <__dso_handle>
+    10d2:	e8 59 ff ff ff       	callq  1030 <__cxa_finalize@plt>
+    10d7:	e8 64 ff ff ff       	callq  1040 <deregister_tm_clones>
+    10dc:	c6 05 25 2f 00 00 01 	movb   $0x1,0x2f25(%rip)        # 4008 <completed.8060>
+    10e3:	5d                   	pop    %rbp
+    10e4:	c3                   	retq   
+    10e5:	0f 1f 00             	nopl   (%rax)
+    10e8:	c3                   	retq   
+    10e9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+
+00000000000010f0 <frame_dummy>:
+    10f0:	f3 0f 1e fa          	endbr64 
+    10f4:	e9 77 ff ff ff       	jmpq   1070 <register_tm_clones>
+    10f9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+
+0000000000001100 <_ZN3std3sys4unix4args3imp15ARGV_INIT_ARRAY12init_wrapper17h9bae8a0cafc2b6ccE>:
+    1100:	41 57                	push   %r15
+    1102:	41 56                	push   %r14
+    1104:	53                   	push   %rbx
+    1105:	49 89 f7             	mov    %rsi,%r15
+    1108:	48 63 df             	movslq %edi,%rbx
+    110b:	4c 8d 35 0e 2f 00 00 	lea    0x2f0e(%rip),%r14        # 4020 <_ZN3std3sys4unix4args3imp4LOCK17h600045dca3348f0eE>
+    1112:	4c 89 f7             	mov    %r14,%rdi
+    1115:	ff 15 d5 2e 00 00    	callq  *0x2ed5(%rip)        # 3ff0 <pthread_mutex_lock@GLIBC_2.2.5>
+    111b:	48 89 1d ee 2e 00 00 	mov    %rbx,0x2eee(%rip)        # 4010 <_ZN3std3sys4unix4args3imp4ARGC17h393a33c6be9e9b3bE>
+    1122:	4c 89 3d ef 2e 00 00 	mov    %r15,0x2eef(%rip)        # 4018 <_ZN3std3sys4unix4args3imp4ARGV17h5274ca72b78295baE>
+    1129:	4c 89 f7             	mov    %r14,%rdi
+    112c:	5b                   	pop    %rbx
+    112d:	41 5e                	pop    %r14
+    112f:	41 5f                	pop    %r15
+    1131:	ff 25 91 2e 00 00    	jmpq   *0x2e91(%rip)        # 3fc8 <pthread_mutex_unlock@GLIBC_2.2.5>
+    1137:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+    113e:	00 00 
+
+0000000000001140 <_ZN4core3ops8function6FnOnce40call_once$u7b$$u7b$vtable.shim$u7d$$u7d$17h0318dffd3a9d1c14E>:
+    1140:	48 8b 07             	mov    (%rdi),%rax
+    1143:	48 8b 38             	mov    (%rax),%rdi
+    1146:	ff 25 84 2e 00 00    	jmpq   *0x2e84(%rip)        # 3fd0 <_Unwind_GetDataRelBase@GCC_3.0>
+    114c:	0f 1f 40 00          	nopl   0x0(%rax)
+
+0000000000001150 <_ZN4core3ops8function6FnOnce40call_once$u7b$$u7b$vtable.shim$u7d$$u7d$17h3dfb55efa1414d46E>:
+    1150:	48 8b 07             	mov    (%rdi),%rax
+    1153:	48 8b 38             	mov    (%rax),%rdi
+    1156:	ff 25 4c 2e 00 00    	jmpq   *0x2e4c(%rip)        # 3fa8 <_Unwind_GetTextRelBase@GCC_3.0>
+    115c:	0f 1f 40 00          	nopl   0x0(%rax)
+
+0000000000001160 <_ZN4core3ptr88drop_in_place$LT$panic_unwind..real_imp..find_eh_action..$u7b$$u7b$closure$u7d$$u7d$$GT$17haf97ab3c90a49e7cE>:
+    1160:	c3                   	retq   
+    1161:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    1168:	00 00 00 
+    116b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+
+0000000000001170 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE>:
+    1170:	55                   	push   %rbp
+    1171:	41 57                	push   %r15
+    1173:	41 56                	push   %r14
+    1175:	53                   	push   %rbx
+    1176:	48 83 ec 08          	sub    $0x8,%rsp
+    117a:	41 89 d6             	mov    %edx,%r14d
+    117d:	b8 01 00 00 00       	mov    $0x1,%eax
+    1182:	41 80 fe ff          	cmp    $0xff,%r14b
+    1186:	0f 84 56 01 00 00    	je     12e2 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x172>
+    118c:	41 80 fe 50          	cmp    $0x50,%r14b
+    1190:	75 1d                	jne    11af <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x3f>
+    1192:	48 8b 07             	mov    (%rdi),%rax
+    1195:	48 83 c0 07          	add    $0x7,%rax
+    1199:	48 83 e0 f8          	and    $0xfffffffffffffff8,%rax
+    119d:	48 89 07             	mov    %rax,(%rdi)
+    11a0:	48 8b 10             	mov    (%rax),%rdx
+    11a3:	48 83 c0 08          	add    $0x8,%rax
+    11a7:	48 89 07             	mov    %rax,(%rdi)
+    11aa:	e9 2f 01 00 00       	jmpq   12de <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x16e>
+    11af:	44 89 f1             	mov    %r14d,%ecx
+    11b2:	80 e1 0f             	and    $0xf,%cl
+    11b5:	80 f9 0c             	cmp    $0xc,%cl
+    11b8:	0f 87 24 01 00 00    	ja     12e2 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x172>
+    11be:	0f b6 c9             	movzbl %cl,%ecx
+    11c1:	48 8d 15 38 0e 00 00 	lea    0xe38(%rip),%rdx        # 2000 <_fini+0xa0c>
+    11c8:	48 63 0c 8a          	movslq (%rdx,%rcx,4),%rcx
+    11cc:	48 01 d1             	add    %rdx,%rcx
+    11cf:	ff e1                	jmpq   *%rcx
+    11d1:	48 8b 2f             	mov    (%rdi),%rbp
+    11d4:	4c 8b 7d 00          	mov    0x0(%rbp),%r15
+    11d8:	48 83 c5 08          	add    $0x8,%rbp
+    11dc:	e9 a4 00 00 00       	jmpq   1285 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x115>
+    11e1:	48 8b 2f             	mov    (%rdi),%rbp
+    11e4:	31 c9                	xor    %ecx,%ecx
+    11e6:	45 31 ff             	xor    %r15d,%r15d
+    11e9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    11f0:	0f b6 5d 00          	movzbl 0x0(%rbp),%ebx
+    11f4:	89 da                	mov    %ebx,%edx
+    11f6:	83 e2 7f             	and    $0x7f,%edx
+    11f9:	48 d3 e2             	shl    %cl,%rdx
+    11fc:	48 83 c5 01          	add    $0x1,%rbp
+    1200:	49 09 d7             	or     %rdx,%r15
+    1203:	48 83 c1 07          	add    $0x7,%rcx
+    1207:	84 db                	test   %bl,%bl
+    1209:	78 e5                	js     11f0 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x80>
+    120b:	eb 78                	jmp    1285 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x115>
+    120d:	48 8b 2f             	mov    (%rdi),%rbp
+    1210:	44 0f b7 7d 00       	movzwl 0x0(%rbp),%r15d
+    1215:	48 83 c5 02          	add    $0x2,%rbp
+    1219:	eb 6a                	jmp    1285 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x115>
+    121b:	48 8b 2f             	mov    (%rdi),%rbp
+    121e:	44 8b 7d 00          	mov    0x0(%rbp),%r15d
+    1222:	eb 5d                	jmp    1281 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x111>
+    1224:	48 8b 2f             	mov    (%rdi),%rbp
+    1227:	45 31 ff             	xor    %r15d,%r15d
+    122a:	31 c9                	xor    %ecx,%ecx
+    122c:	0f 1f 40 00          	nopl   0x0(%rax)
+    1230:	0f b6 5d 00          	movzbl 0x0(%rbp),%ebx
+    1234:	89 da                	mov    %ebx,%edx
+    1236:	83 e2 7f             	and    $0x7f,%edx
+    1239:	48 d3 e2             	shl    %cl,%rdx
+    123c:	48 83 c5 01          	add    $0x1,%rbp
+    1240:	49 09 d7             	or     %rdx,%r15
+    1243:	83 c1 07             	add    $0x7,%ecx
+    1246:	84 db                	test   %bl,%bl
+    1248:	78 e6                	js     1230 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0xc0>
+    124a:	48 89 2f             	mov    %rbp,(%rdi)
+    124d:	48 c7 c2 ff ff ff ff 	mov    $0xffffffffffffffff,%rdx
+    1254:	48 d3 e2             	shl    %cl,%rdx
+    1257:	31 ff                	xor    %edi,%edi
+    1259:	f6 c3 40             	test   $0x40,%bl
+    125c:	48 0f 44 d7          	cmove  %rdi,%rdx
+    1260:	83 f9 40             	cmp    $0x40,%ecx
+    1263:	48 0f 43 d7          	cmovae %rdi,%rdx
+    1267:	49 09 d7             	or     %rdx,%r15
+    126a:	eb 1c                	jmp    1288 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x118>
+    126c:	48 8b 2f             	mov    (%rdi),%rbp
+    126f:	4c 0f bf 7d 00       	movswq 0x0(%rbp),%r15
+    1274:	48 83 c5 02          	add    $0x2,%rbp
+    1278:	eb 0b                	jmp    1285 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x115>
+    127a:	48 8b 2f             	mov    (%rdi),%rbp
+    127d:	4c 63 7d 00          	movslq 0x0(%rbp),%r15
+    1281:	48 83 c5 04          	add    $0x4,%rbp
+    1285:	48 89 2f             	mov    %rbp,(%rdi)
+    1288:	44 89 f1             	mov    %r14d,%ecx
+    128b:	c0 e9 04             	shr    $0x4,%cl
+    128e:	80 e1 07             	and    $0x7,%cl
+    1291:	80 f9 04             	cmp    $0x4,%cl
+    1294:	77 4c                	ja     12e2 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x172>
+    1296:	31 d2                	xor    %edx,%edx
+    1298:	0f b6 c9             	movzbl %cl,%ecx
+    129b:	48 8d 3d 92 0d 00 00 	lea    0xd92(%rip),%rdi        # 2034 <_fini+0xa40>
+    12a2:	48 63 0c 8f          	movslq (%rdi,%rcx,4),%rcx
+    12a6:	48 01 f9             	add    %rdi,%rcx
+    12a9:	ff e1                	jmpq   *%rcx
+    12ab:	48 89 ea             	mov    %rbp,%rdx
+    12ae:	eb 23                	jmp    12d3 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x163>
+    12b0:	48 8b 7e 10          	mov    0x10(%rsi),%rdi
+    12b4:	48 8b 46 18          	mov    0x18(%rsi),%rax
+    12b8:	eb 08                	jmp    12c2 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x152>
+    12ba:	48 8b 7e 20          	mov    0x20(%rsi),%rdi
+    12be:	48 8b 46 28          	mov    0x28(%rsi),%rax
+    12c2:	ff 50 18             	callq  *0x18(%rax)
+    12c5:	48 89 c2             	mov    %rax,%rdx
+    12c8:	eb 09                	jmp    12d3 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x163>
+    12ca:	48 8b 56 08          	mov    0x8(%rsi),%rdx
+    12ce:	48 85 d2             	test   %rdx,%rdx
+    12d1:	74 0f                	je     12e2 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x172>
+    12d3:	4c 01 fa             	add    %r15,%rdx
+    12d6:	45 84 f6             	test   %r14b,%r14b
+    12d9:	79 03                	jns    12de <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x16e>
+    12db:	48 8b 12             	mov    (%rdx),%rdx
+    12de:	31 c0                	xor    %eax,%eax
+    12e0:	eb 00                	jmp    12e2 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE+0x172>
+    12e2:	48 83 c4 08          	add    $0x8,%rsp
+    12e6:	5b                   	pop    %rbx
+    12e7:	41 5e                	pop    %r14
+    12e9:	41 5f                	pop    %r15
+    12eb:	5d                   	pop    %rbp
+    12ec:	c3                   	retq   
+    12ed:	0f 1f 00             	nopl   (%rax)
+
+00000000000012f0 <_ZN12panic_unwind8real_imp14find_eh_action28_$u7b$$u7b$closure$u7d$$u7d$17hdd2451d83f6b6178E>:
+    12f0:	48 8b 07             	mov    (%rdi),%rax
+    12f3:	48 8b 38             	mov    (%rax),%rdi
+    12f6:	ff 25 ac 2c 00 00    	jmpq   *0x2cac(%rip)        # 3fa8 <_Unwind_GetTextRelBase@GCC_3.0>
+    12fc:	0f 1f 40 00          	nopl   0x0(%rax)
+
+0000000000001300 <_ZN12panic_unwind8real_imp14find_eh_action28_$u7b$$u7b$closure$u7d$$u7d$17heeb8101b14e5ebf6E>:
+    1300:	48 8b 07             	mov    (%rdi),%rax
+    1303:	48 8b 38             	mov    (%rax),%rdi
+    1306:	ff 25 c4 2c 00 00    	jmpq   *0x2cc4(%rip)        # 3fd0 <_Unwind_GetDataRelBase@GCC_3.0>
+    130c:	0f 1f 40 00          	nopl   0x0(%rax)
+
+0000000000001310 <rust_eh_personality>:
+    1310:	55                   	push   %rbp
+    1311:	41 57                	push   %r15
+    1313:	41 56                	push   %r14
+    1315:	41 55                	push   %r13
+    1317:	41 54                	push   %r12
+    1319:	53                   	push   %rbx
+    131a:	48 81 ec 88 00 00 00 	sub    $0x88,%rsp
+    1321:	bb 03 00 00 00       	mov    $0x3,%ebx
+    1326:	83 ff 01             	cmp    $0x1,%edi
+    1329:	0f 85 ae 02 00 00    	jne    15dd <rust_eh_personality+0x2cd>
+    132f:	4c 89 c5             	mov    %r8,%rbp
+    1332:	41 89 f4             	mov    %esi,%r12d
+    1335:	48 89 4c 24 30       	mov    %rcx,0x30(%rsp)
+    133a:	4c 89 44 24 40       	mov    %r8,0x40(%rsp)
+    133f:	4c 89 c7             	mov    %r8,%rdi
+    1342:	ff 15 70 2c 00 00    	callq  *0x2c70(%rip)        # 3fb8 <_Unwind_GetLanguageSpecificData@GCC_3.0>
+    1348:	49 89 c6             	mov    %rax,%r14
+    134b:	c7 44 24 10 00 00 00 	movl   $0x0,0x10(%rsp)
+    1352:	00 
+    1353:	48 8d 74 24 10       	lea    0x10(%rsp),%rsi
+    1358:	48 89 ef             	mov    %rbp,%rdi
+    135b:	ff 15 4f 2c 00 00    	callq  *0x2c4f(%rip)        # 3fb0 <_Unwind_GetIPInfo@GCC_4.2.0>
+    1361:	49 89 c7             	mov    %rax,%r15
+    1364:	83 7c 24 10 01       	cmpl   $0x1,0x10(%rsp)
+    1369:	49 83 df 00          	sbb    $0x0,%r15
+    136d:	48 89 ef             	mov    %rbp,%rdi
+    1370:	ff 15 2a 2c 00 00    	callq  *0x2c2a(%rip)        # 3fa0 <_Unwind_GetRegionStart@GCC_3.0>
+    1376:	48 8d 4c 24 40       	lea    0x40(%rsp),%rcx
+    137b:	48 89 4c 24 48       	mov    %rcx,0x48(%rsp)
+    1380:	48 89 4c 24 50       	mov    %rcx,0x50(%rsp)
+    1385:	4c 89 7c 24 58       	mov    %r15,0x58(%rsp)
+    138a:	48 89 44 24 28       	mov    %rax,0x28(%rsp)
+    138f:	48 89 44 24 60       	mov    %rax,0x60(%rsp)
+    1394:	48 8d 44 24 48       	lea    0x48(%rsp),%rax
+    1399:	48 89 44 24 68       	mov    %rax,0x68(%rsp)
+    139e:	48 8d 05 8b 29 00 00 	lea    0x298b(%rip),%rax        # 3d30 <__do_global_dtors_aux_fini_array_entry+0x8>
+    13a5:	48 89 44 24 70       	mov    %rax,0x70(%rsp)
+    13aa:	48 8d 44 24 50       	lea    0x50(%rsp),%rax
+    13af:	48 89 44 24 78       	mov    %rax,0x78(%rsp)
+    13b4:	48 8d 05 a5 29 00 00 	lea    0x29a5(%rip),%rax        # 3d60 <__do_global_dtors_aux_fini_array_entry+0x38>
+    13bb:	48 89 84 24 80 00 00 	mov    %rax,0x80(%rsp)
+    13c2:	00 
+    13c3:	4d 85 f6             	test   %r14,%r14
+    13c6:	74 39                	je     1401 <rust_eh_personality+0xf1>
+    13c8:	41 8a 06             	mov    (%r14),%al
+    13cb:	49 83 c6 01          	add    $0x1,%r14
+    13cf:	4c 89 34 24          	mov    %r14,(%rsp)
+    13d3:	3c ff                	cmp    $0xff,%al
+    13d5:	48 89 6c 24 20       	mov    %rbp,0x20(%rsp)
+    13da:	44 89 64 24 0c       	mov    %r12d,0xc(%rsp)
+    13df:	74 32                	je     1413 <rust_eh_personality+0x103>
+    13e1:	0f b6 d0             	movzbl %al,%edx
+    13e4:	48 89 e7             	mov    %rsp,%rdi
+    13e7:	48 8d 74 24 58       	lea    0x58(%rsp),%rsi
+    13ec:	e8 7f fd ff ff       	callq  1170 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE>
+    13f1:	48 85 c0             	test   %rax,%rax
+    13f4:	74 24                	je     141a <rust_eh_personality+0x10a>
+    13f6:	41 be 04 00 00 00    	mov    $0x4,%r14d
+    13fc:	e9 67 01 00 00       	jmpq   1568 <rust_eh_personality+0x258>
+    1401:	45 31 f6             	xor    %r14d,%r14d
+    1404:	49 83 fe 04          	cmp    $0x4,%r14
+    1408:	0f 85 6f 01 00 00    	jne    157d <rust_eh_personality+0x26d>
+    140e:	e9 ca 01 00 00       	jmpq   15dd <rust_eh_personality+0x2cd>
+    1413:	48 8b 54 24 28       	mov    0x28(%rsp),%rdx
+    1418:	eb 04                	jmp    141e <rust_eh_personality+0x10e>
+    141a:	4c 8b 34 24          	mov    (%rsp),%r14
+    141e:	41 8a 06             	mov    (%r14),%al
+    1421:	49 83 c6 01          	add    $0x1,%r14
+    1425:	4c 89 34 24          	mov    %r14,(%rsp)
+    1429:	3c ff                	cmp    $0xff,%al
+    142b:	48 89 54 24 18       	mov    %rdx,0x18(%rsp)
+    1430:	74 1c                	je     144e <rust_eh_personality+0x13e>
+    1432:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    1439:	00 00 00 
+    143c:	0f 1f 40 00          	nopl   0x0(%rax)
+    1440:	41 80 3e 00          	cmpb   $0x0,(%r14)
+    1444:	4d 8d 76 01          	lea    0x1(%r14),%r14
+    1448:	78 f6                	js     1440 <rust_eh_personality+0x130>
+    144a:	4c 89 34 24          	mov    %r14,(%rsp)
+    144e:	41 8a 06             	mov    (%r14),%al
+    1451:	49 83 c6 01          	add    $0x1,%r14
+    1455:	4c 89 34 24          	mov    %r14,(%rsp)
+    1459:	31 c9                	xor    %ecx,%ecx
+    145b:	45 31 e4             	xor    %r12d,%r12d
+    145e:	66 90                	xchg   %ax,%ax
+    1460:	41 0f b6 16          	movzbl (%r14),%edx
+    1464:	89 d6                	mov    %edx,%esi
+    1466:	83 e6 7f             	and    $0x7f,%esi
+    1469:	48 d3 e6             	shl    %cl,%rsi
+    146c:	49 83 c6 01          	add    $0x1,%r14
+    1470:	49 09 f4             	or     %rsi,%r12
+    1473:	48 83 c1 07          	add    $0x7,%rcx
+    1477:	84 d2                	test   %dl,%dl
+    1479:	78 e5                	js     1460 <rust_eh_personality+0x150>
+    147b:	4c 89 34 24          	mov    %r14,(%rsp)
+    147f:	4d 01 f4             	add    %r14,%r12
+    1482:	0f b6 c0             	movzbl %al,%eax
+    1485:	89 44 24 14          	mov    %eax,0x14(%rsp)
+    1489:	48 8d 6c 24 58       	lea    0x58(%rsp),%rbp
+    148e:	4c 89 7c 24 38       	mov    %r15,0x38(%rsp)
+    1493:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+    149a:	00 00 00 
+    149d:	0f 1f 00             	nopl   (%rax)
+    14a0:	4d 39 e6             	cmp    %r12,%r14
+    14a3:	0f 83 bc 00 00 00    	jae    1565 <rust_eh_personality+0x255>
+    14a9:	49 89 e5             	mov    %rsp,%r13
+    14ac:	4c 89 ef             	mov    %r13,%rdi
+    14af:	49 89 ef             	mov    %rbp,%r15
+    14b2:	48 89 ee             	mov    %rbp,%rsi
+    14b5:	8b 6c 24 14          	mov    0x14(%rsp),%ebp
+    14b9:	89 ea                	mov    %ebp,%edx
+    14bb:	e8 b0 fc ff ff       	callq  1170 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE>
+    14c0:	41 be 04 00 00 00    	mov    $0x4,%r14d
+    14c6:	48 85 c0             	test   %rax,%rax
+    14c9:	0f 85 99 00 00 00    	jne    1568 <rust_eh_personality+0x258>
+    14cf:	48 89 d3             	mov    %rdx,%rbx
+    14d2:	4c 89 ef             	mov    %r13,%rdi
+    14d5:	4c 89 fe             	mov    %r15,%rsi
+    14d8:	89 ea                	mov    %ebp,%edx
+    14da:	e8 91 fc ff ff       	callq  1170 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE>
+    14df:	48 85 c0             	test   %rax,%rax
+    14e2:	0f 85 80 00 00 00    	jne    1568 <rust_eh_personality+0x258>
+    14e8:	4c 89 ef             	mov    %r13,%rdi
+    14eb:	49 89 d5             	mov    %rdx,%r13
+    14ee:	89 ea                	mov    %ebp,%edx
+    14f0:	4c 89 fd             	mov    %r15,%rbp
+    14f3:	4c 89 fe             	mov    %r15,%rsi
+    14f6:	e8 75 fc ff ff       	callq  1170 <_ZN12panic_unwind5dwarf2eh20read_encoded_pointer17hbec45f6509d5d74aE>
+    14fb:	48 85 c0             	test   %rax,%rax
+    14fe:	75 68                	jne    1568 <rust_eh_personality+0x258>
+    1500:	4c 8b 34 24          	mov    (%rsp),%r14
+    1504:	31 c9                	xor    %ecx,%ecx
+    1506:	31 c0                	xor    %eax,%eax
+    1508:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+    150f:	00 
+    1510:	41 0f b6 36          	movzbl (%r14),%esi
+    1514:	89 f7                	mov    %esi,%edi
+    1516:	83 e7 7f             	and    $0x7f,%edi
+    1519:	48 d3 e7             	shl    %cl,%rdi
+    151c:	49 83 c6 01          	add    $0x1,%r14
+    1520:	48 09 f8             	or     %rdi,%rax
+    1523:	48 83 c1 07          	add    $0x7,%rcx
+    1527:	40 84 f6             	test   %sil,%sil
+    152a:	78 e4                	js     1510 <rust_eh_personality+0x200>
+    152c:	4c 89 34 24          	mov    %r14,(%rsp)
+    1530:	48 03 5c 24 28       	add    0x28(%rsp),%rbx
+    1535:	4c 8b 7c 24 38       	mov    0x38(%rsp),%r15
+    153a:	49 39 df             	cmp    %rbx,%r15
+    153d:	72 26                	jb     1565 <rust_eh_personality+0x255>
+    153f:	49 01 dd             	add    %rbx,%r13
+    1542:	4d 39 ef             	cmp    %r13,%r15
+    1545:	0f 83 55 ff ff ff    	jae    14a0 <rust_eh_personality+0x190>
+    154b:	48 85 d2             	test   %rdx,%rdx
+    154e:	74 15                	je     1565 <rust_eh_personality+0x255>
+    1550:	48 01 54 24 18       	add    %rdx,0x18(%rsp)
+    1555:	48 83 f8 01          	cmp    $0x1,%rax
+    1559:	41 be 02 00 00 00    	mov    $0x2,%r14d
+    155f:	49 83 de 00          	sbb    $0x0,%r14
+    1563:	eb 03                	jmp    1568 <rust_eh_personality+0x258>
+    1565:	45 31 f6             	xor    %r14d,%r14d
+    1568:	48 8b 6c 24 20       	mov    0x20(%rsp),%rbp
+    156d:	bb 03 00 00 00       	mov    $0x3,%ebx
+    1572:	44 8b 64 24 0c       	mov    0xc(%rsp),%r12d
+    1577:	49 83 fe 04          	cmp    $0x4,%r14
+    157b:	74 60                	je     15dd <rust_eh_personality+0x2cd>
+    157d:	41 f6 c4 01          	test   $0x1,%r12b
+    1581:	75 3e                	jne    15c1 <rust_eh_personality+0x2b1>
+    1583:	49 8d 46 ff          	lea    -0x1(%r14),%rax
+    1587:	48 83 f8 02          	cmp    $0x2,%rax
+    158b:	73 41                	jae    15ce <rust_eh_personality+0x2be>
+    158d:	48 8b 1d 44 2a 00 00 	mov    0x2a44(%rip),%rbx        # 3fd8 <_Unwind_SetGR@GCC_3.0>
+    1594:	48 89 ef             	mov    %rbp,%rdi
+    1597:	31 f6                	xor    %esi,%esi
+    1599:	48 8b 54 24 30       	mov    0x30(%rsp),%rdx
+    159e:	ff d3                	callq  *%rbx
+    15a0:	48 89 ef             	mov    %rbp,%rdi
+    15a3:	be 01 00 00 00       	mov    $0x1,%esi
+    15a8:	31 d2                	xor    %edx,%edx
+    15aa:	ff d3                	callq  *%rbx
+    15ac:	48 89 ef             	mov    %rbp,%rdi
+    15af:	48 8b 74 24 18       	mov    0x18(%rsp),%rsi
+    15b4:	ff 15 3e 2a 00 00    	callq  *0x2a3e(%rip)        # 3ff8 <_Unwind_SetIP@GCC_3.0>
+    15ba:	bb 07 00 00 00       	mov    $0x7,%ebx
+    15bf:	eb 1c                	jmp    15dd <rust_eh_personality+0x2cd>
+    15c1:	48 8d 05 80 0a 00 00 	lea    0xa80(%rip),%rax        # 2048 <_fini+0xa54>
+    15c8:	42 8b 04 b0          	mov    (%rax,%r14,4),%eax
+    15cc:	eb 11                	jmp    15df <rust_eh_personality+0x2cf>
+    15ce:	bb 02 00 00 00       	mov    $0x2,%ebx
+    15d3:	4d 85 f6             	test   %r14,%r14
+    15d6:	75 05                	jne    15dd <rust_eh_personality+0x2cd>
+    15d8:	bb 08 00 00 00       	mov    $0x8,%ebx
+    15dd:	89 d8                	mov    %ebx,%eax
+    15df:	48 81 c4 88 00 00 00 	add    $0x88,%rsp
+    15e6:	5b                   	pop    %rbx
+    15e7:	41 5c                	pop    %r12
+    15e9:	41 5d                	pop    %r13
+    15eb:	41 5e                	pop    %r14
+    15ed:	41 5f                	pop    %r15
+    15ef:	5d                   	pop    %rbp
+    15f0:	c3                   	retq   
+
+Disassembly of section .fini:
+
+00000000000015f4 <_fini>:
+    15f4:	f3 0f 1e fa          	endbr64 
+    15f8:	48 83 ec 08          	sub    $0x8,%rsp
+    15fc:	48 83 c4 08          	add    $0x8,%rsp
+    1600:	c3                   	retq   
