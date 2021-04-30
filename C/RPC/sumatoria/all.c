@@ -3,118 +3,72 @@
 #include <math.h>
 #include <string.h>
 
-#define LENGTH_ODD_ARRAY(x) (x)
-#define LENGTH_EVEN_ARRAY(x) (x - 1)
+//Client needs
+void genArrays(int *values, int* array1, int* array2, int arr1len, int arr2len);
+void *readFile(char *path, char* host, int *arr1len, int *arr2len);
+void *readArgs(int argc, char *argv[], int *arr1len, int *arr2len);
 
-void printIntArray(int *array, int size);
-void printStringArray(char *array[], int size);
-void genArraysEven(int *values, int* array1, int* array2, int size);
-void genArraysOdd(int *values, int* array1, int* array2, int size);
-void *readFile(char *path, char* host, int *arraySize);
-void *readArgs(int argc, char *argv[], int *arraySize);
-int productoPunto(int *arr1, int *arr2, int size);
-double medioRangoEspecial(int minOdd, int maxPrime);
+//Server needs
 int esPrimo(int n);
 int maxPrime(int *arr, int size);
 int minOdd(int *arr, int size);
 int productoPunto(int *arr1, int *arr2, int size);
+double medioRangoEspecial(int minOdd, int maxPrime);
 
 int main(int argc, char *argv[]) {
 
-    int arraySize;
-    char host[20];
     int *valores;
+    char host[20];
+    int array1[5];
+    int array2[5];
+    int arr1len;
+    int arr2len;
     int productoP;
     double medioRangoE;
 
     if(argc == 2)
     {
-        valores = (int *)readFile(argv[1], host, &arraySize);
+       valores = (int *)readFile(argv[1], host, &arr1len, &arr2len);
     }
     else if(argc > 2)
     {
         //host siempre es argv[1]
         strcpy(host, argv[1]);
-       valores = (int *)readArgs(argc, argv, &arraySize);
+        valores = (int *)readArgs(argc, argv, &arr1len, &arr2len);
     }
     else
     {
-        printf("Cantidad de argumentos inválida");
+        printf("Cantidad de argumentos inválida\n");
+        exit(1);
     }
 
-    //El tamaño de los arreglos es argv[2]/2 redondeado hacia arriba
-    int isEven = arraySize % 2;
-    arraySize = (int)ceil((double)arraySize / 2);
-    int *array1;
-    int *array2;
+    genArrays(valores, array1, array2, arr1len, arr2len);
 
-    switch (isEven)
-    {
-    case 0:
-        //Par
-        array1 = (int *)malloc(sizeof(int) * arraySize);
-        array2 = (int *)malloc(sizeof(int) * arraySize);
-
-        genArraysEven(valores, array1, array2, arraySize);
-
-        productoP = productoPunto(array1, array2, arraySize);
-        medioRangoE = medioRangoEspecial(minOdd(array1, arraySize), maxPrime(array2, arraySize));
-        break;
-    case 1:
-        //Impar
-        array1 = (int *)malloc(sizeof(int) * LENGTH_EVEN_ARRAY(arraySize));
-        array2 = (int *)malloc(sizeof(int) * (arraySize + 1));
-
-        genArraysOdd(valores, array1, array2, arraySize);
-
-        productoP = productoPunto(array1, array2, LENGTH_EVEN_ARRAY(arraySize));
-        medioRangoE = medioRangoEspecial(minOdd(array1, LENGTH_EVEN_ARRAY(arraySize)), maxPrime(array2, arraySize));
-
-    break;
-    default:
-        printf("Error generando los arrays ¿¿¿¿\n");
-        break;
-    }       
+    productoP = productoPunto(array1, array2, arr1len);
+    medioRangoE = medioRangoEspecial(minOdd(array1, arr1len), maxPrime(array2, arr2len));
 
     printf("Producto Punto: %d\nMedio Rango Especial: %f\n", productoP, medioRangoE);
     return 0;
 }
 
-void printIntArray(int *array, int size){
-    for(int i = 0; i < size; i++){
-        printf("valores[%d] = %d\n", i, array[i]);
-        
-    }
-}
-
-void printStringArray(char *array[], int size){
-     for(int i = 0; i < size; i++){
-        printf("args[%d] = %s\n", i, array[i]);
-    }
-}
-
-void genArraysEven(int *values, int* array1, int* array2, int size){
-    for(int i = 0; i < size; i++){
+void genArrays(int *values, int* array1, int* array2, int array1len, int array2len){
+    for(int i = 0; i < array1len; i++){
         array1[i] = values[i];
-        array2[i] = values[i + size];
+        array2[i] = values[i + array1len];
+    }
+
+    if(array1len < array2len){
+        //Es impar, agregar último elemento al arreglo 2
+        array2[array2len - 1] = values[array2len * 2 - 2];
     }
 }
 
-void genArraysOdd(int *values, int* array1, int* array2, int size){
-    for(int i = 0; i < size - 1; i++){
-        array1[i] = values[i];
-        array2[i] = values[i + size - 1];
-    }
-
-    array2[size - 1] = values[size* 2 - 2];
-}
-
-
-void *readFile(char *path, char* host, int *arraySize){
+void *readFile(char *path, char* host, int *arr1len, int *arr2len){
 
     char buffer[50];
     char values_raw[30];
     char host_raw[20];
+    int num_elems;
 
     FILE *file = fopen(path, "r");
 
@@ -124,40 +78,58 @@ void *readFile(char *path, char* host, int *arraySize){
 	}
 	//Leer hasta el fin o hasta que se rompa
     fgets(buffer, 50, file);
-	if(sscanf(buffer, "%s %d %[^\t\n]", host_raw, arraySize, values_raw) != 3){
-        perror("No se pudo leer el archivo\n");
+	if(sscanf(buffer, "%s %d %[^\t\n]", host_raw, &num_elems, values_raw) != 3){
+        perror("El archivo tiene un formato incorrecto\n");
+        exit(4);
 	}
 
 	fclose(file);
 
-    int *valores = (int *)malloc(sizeof(int) * (*arraySize));
-    
+    int *valores = (int *)malloc(sizeof(int) * num_elems);
     char *token = strtok(values_raw, " ");
+
     for(int i = 0 ; token != NULL; i++){
         valores[i] = atoi(token);
-        printf("Token %s Valores[%d] : %d\n", token, i, valores[i]);
         token = strtok(NULL, " ");
+    }
+
+    int isOdd = num_elems % 2;
+
+    if(isOdd){
+        //impar
+        *arr2len = (int)ceil((double)num_elems / 2);
+        *arr1len = *arr2len - 1;
+    }
+    else{
+        //par
+        *arr1len = num_elems / 2;
+        *arr2len = *arr1len;
     }
 
     return valores;
 }
 
-void *readArgs(int argc, char *argv[], int *arraySize){
+void *readArgs(int argc, char *argv[], int *arr1len, int *arr2len){
 
-    //Número de argumentos a leer es argv[2] redondeado hacia arriba
-    *arraySize = atoi(argv[2]);
-    if(*arraySize < 0){
-        printf("El tamaño de los arreglos debe ser mayor a 0");
-    }
+    //Número de argumentos a leer es siempre es argv[2]
+    int num_elems = atoi(argv[2]);
+    int *valores = (int *)malloc(sizeof(int) * num_elems);
     
-    if(argc + 3 < *arraySize){
-        printf("La cantidad de valores no concuerda con el tamaño del arreglo");
-    }
-
-    int *valores = (int *)malloc(sizeof(int) * (*arraySize));
-    
-    for(int i = 0 ; i < *arraySize; i++){
+    for(int i = 0 ; i < num_elems; i++){
         valores[i] = atoi(argv[3 + i]);
+    }
+
+    int isOdd = num_elems % 2;
+
+    if(isOdd){
+        //impar
+        *arr2len = (int)ceil((double)num_elems / 2);
+        *arr1len = *arr2len - 1;
+    }
+    else{
+        //par
+        *arr1len = num_elems / 2;
+        *arr2len = *arr1len;
     }
 
     return valores;
@@ -214,7 +186,6 @@ int esPrimo(int n){
 }
 
 double medioRangoEspecial(int minOdd, int maxPrime){
-    printf("minOdd: %d maxPrime: %d MedioRango: %f\n", minOdd, maxPrime, (minOdd + maxPrime) / 2.0);
     return (minOdd + maxPrime) / 2.0;
 }
 
