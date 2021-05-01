@@ -41,9 +41,10 @@ int main(int argc, char *argv[]) {
         printf("Cantidad de argumentos inválida\n");
         exit(1);
     }
-
+    printf("Calling RPC on %s\n", host);
     genArrays(valores, array1, array2, arr1len, arr2len);
-
+    free(valores);
+    
     productoP = productoPunto(array1, array2, arr1len);
     medioRangoE = medioRangoEspecial(minOdd(array1, arr1len), maxPrime(array2, arr2len));
 
@@ -67,7 +68,6 @@ void *readFile(char *path, char* host, int *arr1len, int *arr2len){
 
     char buffer[50];
     char values_raw[30];
-    char host_raw[20];
     int num_elems;
 
     FILE *file = fopen(path, "r");
@@ -78,7 +78,7 @@ void *readFile(char *path, char* host, int *arr1len, int *arr2len){
 	}
 	//Leer hasta el fin o hasta que se rompa
     fgets(buffer, 50, file);
-	if(sscanf(buffer, "%s %d %[^\t\n]", host_raw, &num_elems, values_raw) != 3){
+	if(sscanf(buffer, "%s %d %[^\t\n]", host, &num_elems, values_raw) != 3){
         perror("El archivo tiene un formato incorrecto\n");
         exit(4);
 	}

@@ -22,50 +22,43 @@ void genArrays(int *values, int *array1, int *array2, int array1len, int array2l
     }
 }
 
-void *readFile(char *path, char *host, int *arr1len, int *arr2len)
-{
+void *readFile(char *path, char* host, int *arr1len, int *arr2len){
 
     char buffer[50];
     char values_raw[30];
-    char host_raw[20];
     int num_elems;
 
     FILE *file = fopen(path, "r");
 
-    if (file == NULL)
-    {
-        printf("Cannot open %s\n", path);
-        exit(8);
-    }
-    //Leer hasta el fin o hasta que se rompa
+    if(file == NULL){
+			printf("Cannot open %s\n", path);
+			exit(8);
+	}
+	//Leer hasta el fin o hasta que se rompa
     fgets(buffer, 50, file);
-    if (sscanf(buffer, "%s %d %[^\t\n]", host_raw, &num_elems, values_raw) != 3)
-    {
+	if(sscanf(buffer, "%s %d %[^\t\n]", host, &num_elems, values_raw) != 3){
         perror("El archivo tiene un formato incorrecto\n");
         exit(4);
-    }
+	}
 
-    fclose(file);
+	fclose(file);
 
     int *valores = (int *)malloc(sizeof(int) * num_elems);
     char *token = strtok(values_raw, " ");
 
-    for (int i = 0; token != NULL; i++)
-    {
+    for(int i = 0 ; token != NULL; i++){
         valores[i] = atoi(token);
         token = strtok(NULL, " ");
     }
 
     int isOdd = num_elems % 2;
 
-    if (isOdd)
-    {
+    if(isOdd){
         //impar
         *arr2len = (int)ceil((double)num_elems / 2);
         *arr1len = *arr2len - 1;
     }
-    else
-    {
+    else{
         //par
         *arr1len = num_elems / 2;
         *arr2len = *arr1len;
@@ -161,14 +154,71 @@ void prog_op_1(char *host)
 
 int main(int argc, char *argv[])
 {
-    char *host;
+    int *valores;
+    char host[20];
+    int array1[5];
+    int array2[5];
+    int arr1len;
+    int arr2len;
 
     if (argc < 2)
     {
         printf("usage: %s server_host\n", argv[0]);
         exit(1);
     }
-    host = argv[1];
-    prog_op_1(host);
+    if(argc == 2)
+    {
+       valores = (int *)readFile(argv[1], host, &arr1len, &arr2len);
+    }
+    else if(argc > 2)
+    {
+        //host siempre es argv[1]
+        strcpy(host, argv[1]);
+        valores = (int *)readArgs(argc, argv, &arr1len, &arr2len);
+    }
+
+    printf("Calling RPC on %s\n", host);
+    //prog_op_1(host);
+    CLIENT *clnt;
+    int *result_1;
+    vectores productopunto_1_arg;
+    double *result_2;
+    vectores mediorangoespecial_1_arg;
+
+    //Generar estructura
+    genArrays(valores, productopunto_1_arg.array1, productopunto_1_arg.array2, arr1len, arr2len);
+    genArrays(valores, mediorangoespecial_1_arg.array1, mediorangoespecial_1_arg.array2, arr1len, arr2len);
+    free(valores);
+
+    productopunto_1_arg.arr1len = arr1len;
+    productopunto_1_arg.arr2len = arr2len;
+    mediorangoespecial_1_arg.arr1len = arr1len;
+    mediorangoespecial_1_arg.arr2len = arr2len;
+
+#ifndef DEBUG
+    clnt = clnt_create(host, PROG_OP, VERS_OP, "udp");
+    if (clnt == NULL)
+    {
+        clnt_pcreateerror(host);
+        exit(1);
+    }
+#endif /* DEBUG */
+
+    result_1 = productopunto_1(&productopunto_1_arg, clnt);
+    if (result_1 == (int *)NULL)
+    {
+        clnt_perror(clnt, "call failed");
+    }
+    result_2 = mediorangoespecial_1(&mediorangoespecial_1_arg, clnt);
+    if (result_2 == (double *)NULL)
+    {
+        clnt_perror(clnt, "call failed");
+    }
+
+#ifndef DEBUG
+    clnt_destroy(clnt);
+#endif /* DEBUG */
+
+    printf("Producto Punto: %d\nMedio Rango Especial: %0.3f\n", *result_1, *result_2);
     exit(0);
 }
