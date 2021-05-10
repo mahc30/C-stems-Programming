@@ -11,7 +11,7 @@
 void *readFile(char *path, char *host, int *numvals, int *arr1len, int *arr2len)
 {
 
-    char buffer[150];
+    char buffer[1024];
     char values_raw[101];
     int num_elems;
 
@@ -22,7 +22,7 @@ void *readFile(char *path, char *host, int *numvals, int *arr1len, int *arr2len)
         printf("Cannot open %s\n", path);
         exit(8);
     }
-    fgets(buffer, 150, file);
+    fgets(buffer, 1024, file);
     if (sscanf(buffer, "%s %d %[^\t\n]", host, &num_elems, values_raw) != 3)
     {
         perror("El archivo tiene un formato incorrecto\n");
